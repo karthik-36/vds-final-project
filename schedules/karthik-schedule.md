@@ -1,0 +1,5 @@
+- Prepare prototype for client.
+- setup up initial git repo, add collaborators.
+- set up trello board, add members.
+- Gather and analyze client requirements.
+- deploy initial version of the  on github pages.

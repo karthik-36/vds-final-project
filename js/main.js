@@ -1,5 +1,5 @@
 const N = 16 + 1;
-const STAGES = 4;
+const STAGES = 50;
 const data = [];
 const side = 20;
 const width = side * N + 15, height = side * N;
@@ -337,6 +337,8 @@ function initializeEventListeners() {
   const challengeBitInput = document.getElementById("challenge-bit-position");
   const reorderRowsButton = document.getElementById("reorder-rows");
   const reorderColsButton = document.getElementById("reorder-cols");
+  const viewPufDnaButton = document.getElementById("view-puf-dna-button");
+  const pufNumberSelect = document.getElementById("puf-select");
 
   reorderRowsButton.addEventListener("click", function() {
     let challengeBitPosition = parseInt(challengeBitInput.value, 10);
@@ -349,6 +351,42 @@ function initializeEventListeners() {
     let delta = parseInt(deltaInput.value, 10);
     sortPufs(stage, delta);
     renderMatrix(data);
+  });
+
+  viewPufDnaButton.addEventListener("click", function(e) {
+    let pufNumber = parseInt(pufNumberSelect.value);
+    let pufId = pufNumber - 1;
+    let puf = app.pufs.find(puf => puf.getId() === pufId);
+    let data = puf.getDeltas();
+
+    // Reference: https://observablehq.com/@d3/bar-chart
+    let upperChart = BarChart(data.map(d => d[0]), {
+      x: (d, i) => i + 1,
+      y: d => d,
+      yFormat: "",
+      yLabel: "Value 𝛿(0)",
+      yDomain: [-3.5, 3.5], // [ymin, ymax]
+      width: 1000,
+      height: 250,
+      color: "steelblue"
+    });
+    let container1 = document.getElementById("upper-bar-chart");
+    clearContainer(container1);
+    container1.appendChild(upperChart);
+
+    let lowerChart = BarChart(data.map(d => d[1]), {
+      x: (d, i) => i + 1,
+      y: d => d,
+      yFormat: "",
+      yDomain: [-3.5, 3.5], // [ymin, ymax]
+      yLabel: "Value 𝛿(1)",
+      width: 1000,
+      height: 250,
+      color: "steelblue"
+    });
+    let container2 = document.getElementById("lower-bar-chart");
+    clearContainer(container2);
+    container2.appendChild(lowerChart);
   });
 }
 

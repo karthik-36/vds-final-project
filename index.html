@@ -92,7 +92,52 @@
                 <button type="button" class="btn btn-primary mb-3" id="clear-button">Clear</button>
               </div>
             </div>
+            <div class="row input-wrapper">
+              <div class="col">
+                View PUF DNA
+              </div>
+              <div class="col">
+                <select class="form-select" aria-label="Default select example" id="puf-select">
+                  <option value="1" selected>1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
+                  <option value="13">13</option>
+                  <option value="14">14</option>
+                  <option value="15">15</option>
+                  <option value="16">16</option>
+                </select>
+              </div>
+              <div class="col">
+                <button type="button" class="btn btn-primary mb-3" id="view-puf-dna-button" data-bs-toggle="modal" data-bs-target="#bar-chart-modal">View</button>
+                
+              </div>
+            </div>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal modal-xl fade" id="bar-chart-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">PUF DNA</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="upper-bar-chart"></div>
+          <div id="lower-bar-chart"></div>
+        </div>
+        <div class="modal-footer">
         </div>
       </div>
     </div>
@@ -109,6 +154,7 @@
 <script src="js/utils.js"></script>
 <script src="js/challenge.js"></script>
 <script src="js/puf.js"></script>
+<script src="js/barchart.js"></script>
 <script src="js/main.js"></script>
 <!-- <script src="test/test.js"></script> -->
 

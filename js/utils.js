@@ -28,3 +28,9 @@ function toBinaryVector(value) {
 function toBinaryString(value) {
   return toBinaryVector(value).join("");
 }
+
+function clearContainer(container) {
+  while (container.firstChild) {
+    container.removeChild(container.lastChild);
+  }
+}

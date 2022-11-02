@@ -10,6 +10,7 @@ let id = 0;
 let selectedRowIndex = null;
 let selectedColIndex = null;
 var context = null;
+const X_OFFSET = 10;
 const textStyle = `
   font-size: 10px;
 `;
@@ -31,9 +32,16 @@ const realColorScaleRed = d3.scaleSequential(d3.interpolateBlues).domain([-1, 1]
 
 const binaryColorScale = (value) => belowThreshold(value) ? c(0) : c(1);
 
+// global object to store the app state
 const app = {
   colorScale: binaryColorScale,
-  brushEnabled: false
+  brushEnabled: false,
+  // array of PUF objects
+  // they may not be in order of id because if the user applies a sorting operation then they will be reordered
+  pufs: [],
+  // array of challenge objects
+  // they may not be in order of id because if the user applies a sorting operation then they will be reordered
+  challenges: []
 };
 
 main(); 
@@ -71,7 +79,7 @@ function populateData() {
   }
   data.forEach(d => {
     if (!d.isRowDragHandle) {
-      d.x += 10;
+      d.x += X_OFFSET;
     }
   });
 }
@@ -249,15 +257,22 @@ function brushed({ selection }) {
   let value = [];
   if (selection) {
     let [[x0, y0], [x1, y1]] = selection;
-    x0 = Math.floor(x0 / 1) - (Math.floor(x0 / 1) % side);
-    y0 = Math.floor(y0 / 1) - (Math.floor(y0 / 1) % side);
-    x1 = Math.floor(x1 / 1) - (Math.floor(x1 / 1) % side) + side;
-    y1 = Math.floor(y1 / 1) - (Math.floor(y1 / 1) % side) + side;
+    x0 -= X_OFFSET;
+    x0 = Math.floor(x0) - (Math.floor(x0) % side);
+    x0 += X_OFFSET;
+    y0 = Math.floor(y0) - (Math.floor(y0) % side);
+    x1 -= X_OFFSET;
+    x1 = Math.floor(x1) - (Math.floor(x1) % side) + side;
+    x1 += X_OFFSET;
+    y1 = Math.floor(y1) - (Math.floor(y1) % side) + side;
     console.log(x0, y0, x1, y1);
     let selectedData = data.filter(d => x0 <= d.x && d.x < x1 && y0 <= d.y && d.y < y1);
     let sum = 0;
-    for (let datum of selectedData) {
-      sum += (belowThreshold(datum.data.value) ? 0 : 1);
+    for (let d of selectedData) {
+      let puf = app.pufs[d.pufIndex];
+      let challenge = app.challenges[d.challengeIndex];
+      let response = puf.getResponse(challenge);
+      sum += belowThreshold(response) ? 0 : 1;
     }
     console.log(`Sum: ${sum}`);
     document.getElementById("brush-value").value = sum;

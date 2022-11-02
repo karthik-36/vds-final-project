@@ -361,7 +361,7 @@ function initializeEventListeners() {
 
     // Reference: https://observablehq.com/@d3/bar-chart
     let upperChart = BarChart(data.map(d => d[0]), {
-      x: (d, i) => i,
+      x: (d, i) => i + 1,
       y: d => d,
       yFormat: "",
       yLabel: "Value 𝛿(0)",
@@ -375,7 +375,7 @@ function initializeEventListeners() {
     container1.appendChild(upperChart);
 
     let lowerChart = BarChart(data.map(d => d[1]), {
-      x: (d, i) => i,
+      x: (d, i) => i + 1,
       y: d => d,
       yFormat: "",
       yDomain: [-3.5, 3.5], // [ymin, ymax]

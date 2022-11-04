@@ -7,7 +7,7 @@ class PUF {
 
     this.stages = stages;
     this.deltas = [];
-    this.id = PUF.count++;
+    this.id = ++PUF.count;
     this.response = _.memoize(this.response, (challenge, position) => challenge.getValue().toString() + "|" + position).bind(this);
 
     if (fromDeltas) {

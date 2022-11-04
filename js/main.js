@@ -20,7 +20,7 @@ const brush = d3.brush().on("end", brushed);
 var tip = d3.tip().attr('class', 'd3-tip').html((event, d) => {
   let pufIndex = d.pufIndex;
   let challengeIndex = d.challengeIndex;
-  return app.pufs[pufIndex].getResponse(app.challenges[challengeIndex]);
+  return app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2);
 });
 
 // let c = d3.scaleOrdinal().domain([0, 1]).range(["#eeeeee", "#000000"]);
@@ -369,8 +369,7 @@ function initializeEventListeners() {
   });
 
   viewPufDnaButton.addEventListener("click", function(e) {
-    let pufNumber = parseInt(pufNumberSelect.value);
-    let pufId = pufNumber - 1;
+    let pufId = parseInt(pufNumberSelect.value);
     let puf = app.pufs.find(puf => puf.getId() === pufId);
     let data = puf.getDeltas();
 
@@ -403,6 +402,13 @@ function initializeEventListeners() {
     clearContainer(container2);
     container2.appendChild(lowerChart);
   });
+
+  for (let i=2; i<=STAGES; i++) {
+    let option= document.createElement("option");
+    option.value = i;
+    option.innerHTML = i;
+    stageInput.appendChild(option);
+  }
 }
 
 

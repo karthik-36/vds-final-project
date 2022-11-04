@@ -22,7 +22,7 @@
       <div class="col right">
         <div class="row">
           <div class="col">
-            <div class="row input-wrapper">
+            <div class="row input-wrapper card1">
               <div class="col">
                 Challenge Bit Position
               </div>
@@ -33,16 +33,15 @@
                 <button type="button" class="btn btn-primary" id="reorder-rows">Reorder Rows</button>
               </div>
             </div>
-            <div class="row input-wrapper">
+            <div class="row card1">
+              <div class="col">
+            <div class="row input-wrapper" style="padding-bottom: 10px;">
               <div class="col">
                 Stage Number
               </div>
               <div class="col">
-                <select class="form-select" aria-label="Default select example" id="stage-number">
+                <select class="form-select" aria-label="" id="stage-number">
                   <option value="1" selected>1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
                 </select>
               </div>
               <div class="col">
@@ -60,14 +59,16 @@
                 </select>
               </div>
               <div class="col">
-                <button type="button" class="btn btn-primary mb-3" id="reorder-cols">Reorder Columns (asc. &delta;)</button>
+                <button type="button" class="btn btn-primary" id="reorder-cols">Reorder Columns (asc. &delta;)</button>
+              </div>
+            </div>
               </div>
             </div>
           </div>
         </div>
         <div class="row">
           <div class="col">
-            <div class="row input-wrapper">
+            <div class="row input-wrapper card1">
               <div class="col">
                 Mode
               </div>
@@ -81,7 +82,7 @@
                 
               </div>
             </div>
-            <div class="row input-wrapper">
+            <div class="row input-wrapper card1">
               <div class="col">
                 Response Bias
               </div>
@@ -89,10 +90,10 @@
                 <input type="text" readonly class="form-control" placeholder="" id="brush-value"/>
               </div>
               <div class="col">
-                <button type="button" class="btn btn-primary mb-3" id="clear-button">Clear</button>
+                <button type="button" class="btn btn-primary" id="clear-button">Clear</button>
               </div>
             </div>
-            <div class="row input-wrapper">
+            <div class="row input-wrapper card1">
               <div class="col">
                 View PUF DNA
               </div>
@@ -117,7 +118,7 @@
                 </select>
               </div>
               <div class="col">
-                <button type="button" class="btn btn-primary mb-3" id="view-puf-dna-button" data-bs-toggle="modal" data-bs-target="#bar-chart-modal">View</button>
+                <button type="button" class="btn btn-primary" id="view-puf-dna-button" data-bs-toggle="modal" data-bs-target="#bar-chart-modal">View</button>
                 
               </div>
             </div>

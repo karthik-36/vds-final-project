@@ -409,6 +409,8 @@ function initializeEventListeners() {
     option.innerHTML = i;
     stageInput.appendChild(option);
   }
+
+  document.getElementById("stages-display").textContent = `Number of stages: ${STAGES}`;
 }
 
 

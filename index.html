@@ -21,6 +21,11 @@
       </div>
       <div class="col right">
         <div class="row input-wrapper card1">
+          <div class="col">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#upload-data-modal">Generate Data</button>
+          </div>
+        </div>
+        <div class="row input-wrapper card1">
           <div class="col" id="stages-display">
           </div>
         </div>
@@ -123,7 +128,6 @@
               </div>
               <div class="col">
                 <button type="button" class="btn btn-primary" id="view-puf-dna-button" data-bs-toggle="modal" data-bs-target="#bar-chart-modal">View</button>
-                
               </div>
             </div>
           </div>
@@ -147,9 +151,25 @@
       </div>
     </div>
   </div>
+  <div class="modal modal-xl fade" id="upload-data-modal" tabindex="-1" aria-labelledby="" aria-hidden="true" role="">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Generate Data</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="vue-app"></div>
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div>
+  </div>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js" integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk" crossorigin="anonymous"></script>
 <script src="lib/lodash.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="lib/box-muller.js"></script>
 <script src="lib/gaussian.js"></script>
 <script src="https://d3js.org/d3.v7.js"></script>
@@ -161,6 +181,7 @@
 <script src="js/puf.js"></script>
 <script src="js/barchart.js"></script>
 <script src="js/main.js"></script>
+<script src="js/edit-data-flow.js"></script>
 <!-- <script src="test/test.js"></script> -->
 
 </body>

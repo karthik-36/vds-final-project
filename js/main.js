@@ -380,8 +380,8 @@ function initializeEventListeners() {
       yFormat: "",
       yLabel: "Value 𝛿(0)",
       yDomain: [-3.5, 3.5], // [ymin, ymax]
-      width: 800,
-      height: 200,
+      width: 1000,
+      height: 300,
       color: "steelblue"
     });
     let container1 = document.getElementById("upper-bar-chart");
@@ -394,8 +394,8 @@ function initializeEventListeners() {
       yFormat: "",
       yDomain: [-3.5, 3.5], // [ymin, ymax]
       yLabel: "Value 𝛿(1)",
-      width: 800,
-      height: 200,
+      width: 1000,
+      height: 300,
       color: "steelblue"
     });
     let container2 = document.getElementById("lower-bar-chart");
@@ -404,7 +404,7 @@ function initializeEventListeners() {
 
     let tableData = []
     for (i = 0; i < data.length; i++) {
-      tableData.push([data[i][0], data[i][1]]);
+      tableData.push([i+1, ' ', data[i][0], ' ', data[i][1]]);
     }
     /*console.log("data ");
     console.log(data);
@@ -418,7 +418,7 @@ function initializeEventListeners() {
     var header = table.append("thead").append("tr");
     header
       .selectAll("th")
-      .data(['delta0', 'delta1'])
+      .data(['Stage',' ', 'delta0', ' ', 'delta1'])
       .enter()
       .append("th")
       .text(function(d) { return d; });
@@ -442,13 +442,10 @@ function initializeEventListeners() {
         return d;
       });
       
-    /*let container3 = document.getElementById("table");
+    let container3 = document.getElementById("table");
     clearContainer(container3);
-    //container3.appendChild(table);
-    let z = document.createElement("table");
-    //z.value = table;
-    z.innerHTML = table;
-    container3.appendChild(z);*/
+    container3.appendChild(table.node());
+    
 
   });
 

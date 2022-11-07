@@ -29,13 +29,15 @@ body {
 }
 
 tr{
-    background-color: #FF8448;
+    background-color: antiquewhite;
 
 }
 td{
-    background-color: #0099FF;
+    background-color: antiquewhite;
 
 }
 table{
-    color: #FFFFFF;
+    color: #000000;
+    float: right;
+    padding-left: 30px;
 }

@@ -27,3 +27,15 @@ body {
   padding: 15px;
   margin-bottom: 10px;
 }
+
+tr{
+    background-color: #FF8448;
+
+}
+td{
+    background-color: #0099FF;
+
+}
+table{
+    color: #FFFFFF;
+}

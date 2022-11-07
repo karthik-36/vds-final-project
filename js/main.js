@@ -380,8 +380,8 @@ function initializeEventListeners() {
       yFormat: "",
       yLabel: "Value 𝛿(0)",
       yDomain: [-3.5, 3.5], // [ymin, ymax]
-      width: 1000,
-      height: 250,
+      width: 800,
+      height: 200,
       color: "steelblue"
     });
     let container1 = document.getElementById("upper-bar-chart");
@@ -394,13 +394,62 @@ function initializeEventListeners() {
       yFormat: "",
       yDomain: [-3.5, 3.5], // [ymin, ymax]
       yLabel: "Value 𝛿(1)",
-      width: 1000,
-      height: 250,
+      width: 800,
+      height: 200,
       color: "steelblue"
     });
     let container2 = document.getElementById("lower-bar-chart");
     clearContainer(container2);
     container2.appendChild(lowerChart);
+
+    let tableData = []
+    for (i = 0; i < data.length; i++) {
+      tableData.push([data[i][0], data[i][1]]);
+    }
+    /*console.log("data ");
+    console.log(data);
+    console.log("tableData ");
+    console.log(tableData);*/
+
+    // Reference: http://bl.ocks.org/yan2014/c9dd6919658991d33b87
+    // render the table
+    var table = d3.select("#table").append("table");
+
+    var header = table.append("thead").append("tr");
+    header
+      .selectAll("th")
+      .data(['delta0', 'delta1'])
+      .enter()
+      .append("th")
+      .text(function(d) { return d; });
+    var tablebody = table.append("tbody");
+    rows = tablebody
+      .selectAll("tr")
+      .data(tableData)
+      .enter()
+      .append("tr");
+    // We built the rows using the nested array - now each row has its own array.
+    cells = rows.selectAll("td")
+      // each row has data associated; we get it and enter it for the cells.
+      .data(function(d) {
+          //console.log(d);
+          return d;
+      })
+      .enter()
+      .append("td")
+      .text(function(d) {
+        //console.log(d);
+        return d;
+      });
+      
+    /*let container3 = document.getElementById("table");
+    clearContainer(container3);
+    //container3.appendChild(table);
+    let z = document.createElement("table");
+    //z.value = table;
+    z.innerHTML = table;
+    container3.appendChild(z);*/
+
   });
 
   for (let i=2; i<=STAGES; i++) {

@@ -23,7 +23,6 @@ var tip = d3.tip().attr('class', 'd3-tip').html((event, d) => {
   return app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2);
 });
 
-// let c = d3.scaleOrdinal().domain([0, 1]).range(["#eeeeee", "#000000"]);
 let c = d3.scaleOrdinal().domain([0, 1]).range(["lightblue", "pink"]);
 
 
@@ -94,40 +93,12 @@ function main() {
     .attr("viewBox", [0, 0, width, height])
     .attr("stroke-width", 2);
 
-  // heatmapSvg = d3.create("svg")
-  //   .attr("viewBox", [0, 0, width, height])
-  //   .attr("stroke-width", 2);
-
-  // histogramSvg = d3.create("svg")
-  //   .attr("viewBox", [0, 0, width, height])
-  //   .attr("stroke-width", 2);
-
-
-
-
   // add the brush
 
   renderMatrix(data);
-  // renderHeatmap(data);
-
-
-  let handles = svg.selectAll(".h21");
-  handles.on("click", onHandleClick);
-
 
   document.getElementById("matrix").append(svg.node());
-  // document.getElementById("heatmap").append(heatmapSvg.node());
-  // document.getElementById("histogram").append(renderHistogram(data));
-
-
-  // heatmapSvg.selectAll(".node").call(tip);
-  // heatmapSvg.selectAll(".node")
-  //   .on('mouseover', tip.show)
-  //   .on('mouseout', tip.hide)
-
-  // svg.call(brush);
   initializeEventListeners();
-
 }
 
 function initPufs() {
@@ -210,14 +181,8 @@ function renderMatrix(data) {
     .attr("fill-opacity", d => d.selected ? 0.45 : 1)
     .attr("width", side)
     .attr("height", side)
-  // .call(tip)
 
-
-
-
-
-
-  svg.selectAll(".h21")
+  svg.selectAll(".label")
     .data(data.filter(d => d.isDragHandle), d => d.id)
     .join("text")
     .text(d => {
@@ -233,13 +198,8 @@ function renderMatrix(data) {
     })
     .attr("y", d => d.y + 0 * side + 15)
     .attr("x", d => d.x + 0 * side + 0)
-    // .attr("r", side / 2)
-    .attr("class", d => getSquareClass(d) + " h21")
-    // .attr("width", side * 0.5)
-    // .attr("height", side * 0.5)
+    .attr("class", d => getSquareClass(d) + " label")
     .attr("style", textStyle)
-  // .attr("href", "img/h21.svg")
-  // .on("click", onHandleClick);
 
   if (app.brushEnabled) {
     context.call(brush);
@@ -249,7 +209,6 @@ function renderMatrix(data) {
       .on('mouseover', tip.show)
       .on('mouseout', tip.hide)
   }
-
 }
 
 
@@ -284,47 +243,6 @@ function getSquareClass(d) {
   return `row-${d.row}`;
 }
 
-function between(a, x, b) {
-  return a <= x && x <= b;
-}
-
-function swapRows(data, rowIndex1, rowIndex2) {
-  for (let i = 0; i < N; i++) {
-    let d1 = data.find(d => d.row === rowIndex1 && d.col === i)
-    let d2 = data.find(d => d.row === rowIndex2 && d.col === i)
-
-    let t = d1.data;
-    d1.data = d2.data;
-    d2.data = t;
-  }
-}
-function swapCols(data, colIndex1, colIndex2) {
-  for (let i = 0; i < N; i++) {
-    let d1 = data.find(d => d.col === colIndex1 && d.row === i)
-    let d2 = data.find(d => d.col === colIndex2 && d.row === i)
-
-    let t = d1.data;
-    d1.data = d2.data;
-    d2.data = t;
-  }
-}
-
-
-function onHandleClick(e, handleDatum) {
-  if (app.brushEnabled) {
-    return;
-  }
-  if (handleDatum.isRowDragHandle) {
-    highlightRow(data, handleDatum.row);
-    selectedRowIndex = handleDatum.row;
-    selectedColIndex = null;
-  } else {
-    highlightCol(data, handleDatum.col);
-    selectedColIndex = handleDatum.col;
-    selectedRowIndex = null;
-  }
-  renderMatrix(data);
-}
 
 function initializeEventListeners() {
   document.getElementById("clear-button").addEventListener("click", () => {
@@ -413,99 +331,14 @@ function initializeEventListeners() {
   document.getElementById("stages-display").textContent = `Number of stages: ${STAGES}`;
 }
 
-
-
-function highlightRow(data, rowIndex) {
-  data.forEach(d => {
-    if (d.row === rowIndex) {
-      d.selected = true;
-    } else {
-      d.selected = false;
-    }
-  });
-}
-
-function highlightCol(data, colIndex) {
-  data.forEach(d => {
-    if (d.col === colIndex) {
-      d.selected = true;
-    } else {
-      d.selected = false;
-    }
-  });
-}
-
 function clearSelection(data) {
-  selectedRowIndex = null;
-  selectedColIndex = null;
-  highlightRow(data, -1);
   if (app.brushEnabled) {
     brush.clear(context);
   }
-  renderMatrix(data);
 }
 
 
 
-
-function renderHeatmap(data) {
-
-  let id = 0;
-
-  let dragHandles = data.filter(d => d.isDragHandle);
-  const heatmapData = [...dragHandles];
-
-  for (let row1 = 1; row1 < N; row1++) {
-    for (let row2 = 1; row2 < N; row2++) {
-      let similarty = getSimilarty(data, row1, row2);
-      heatmapData.push({
-        row: row1,
-        col: row2,
-        data: { value: similarty },
-        id: id++,
-        isDragHandle: false,
-        x: row2 * side,
-        y: row1 * side,
-      })
-    }
-  }
-
-
-  heatmapSvg.selectAll(".node")
-    .data(heatmapData.filter(d => !d.isDragHandle), d => d.id)
-    .join("rect")
-    .attr("stroke", "white")
-    .attr("stroke-width", 0.5)
-    .attr("y", d => d.y)
-    .attr("x", d => d.x)
-    .attr("class", d => getSquareClass(d) + " node")
-    .attr("fill", d => {
-      if (d.row < d.col) return "#eeeeee";
-      return realColorScaleRed(d.data.value)
-    })
-    .attr("width", side)
-    .attr("height", side)
-
-  heatmapSvg.selectAll(".h21")
-    .data(heatmapData.filter(d => d.isDragHandle), d => d.id)
-    .join("text")
-    .text(d => {
-      if (d.row === 0 && d.col === 0) {
-        return "";
-      }
-      if (d.row === 0) {
-        return `R${d.col}`;
-      }
-      if (d.col === 0) {
-        return `R${d.row}`;
-      }
-    })
-    .attr("y", d => d.y + 0 * side + 15)
-    .attr("x", d => d.x + 0 * side + 2)
-    .attr("class", d => getSquareClass(d) + " h21")
-    .attr("style", textStyle)
-
-}
 
 function renderHistogram(data) {
   return Histogram(data.filter(d => !d.isDragHandle), {
@@ -516,27 +349,6 @@ function renderHistogram(data) {
     thresholds: 10,
     color: "steelblue"
   })
-}
-
-
-function getSimilarty(data, row1, row2) {
-  let row1Data = data.filter(d => d.row === row1);
-  let row2Data = data.filter(d => d.row === row2);
-
-  let similarity = 0;
-  for (let col = 1; col < N; col++) {
-    let datum1 = row1Data.find(d => d.col === col);
-    let datum2 = row2Data.find(d => d.col === col);
-
-    let v1 = belowThreshold(datum1.data.value) ? 0 : 1;
-    let v2 = belowThreshold(datum2.data.value) ? 0 : 1;
-
-    if (v1 === v2) {
-      similarity++;
-    }
-  }
-
-  return similarity / (N - 1);
 }
 
 function belowThreshold(value) {

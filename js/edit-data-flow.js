@@ -1,20 +1,26 @@
-let app1;
+let editDataApp;
 fetch("templates/template.html")
   .then(response => response.text())
   .then(createModalVueApp)
 
 function createModalVueApp(template) {
-  app1 = new Vue({
-    el: '#vue-app',
+  editDataApp = new Vue({
+    el: '#edit-data-app',
     template: template,
     data() {
       return {
-        hi: "tr",
         mu: 0,
         sigma: 1,
         stages: 4,
-        s: 1,
-        activeSection: 1
+        pufs: 16,
+        activeSection: 1,
+        deltas: [],
+        selectedPufIndex: 0,
+        selectedDelta: {
+          value: 0,
+          index: -1,
+          level: 0,
+        }
       }
     },
     computed: {
@@ -25,24 +31,136 @@ function createModalVueApp(template) {
     },
     methods: {
       next() {
+        let deltas = generateRandomDeltas({
+          stages: this.stages,
+          mean: this.mu,
+          variance: this.sigma,
+          pufCount: this.pufs
+        });
+        this.deltas = deltas;
         this.activeSection = 3;
         Vue.nextTick(() => this.renderDeltaChart());
       },
+      renderMainMatrix() {
+        let pufs = [];
+        let currentId = 1;
+        for (let pufDeltas of this.deltas) {
+          let options = {
+            initialDeltas: pufDeltas,
+            fromDeltas: true
+          };
+          let puf = new PUF(this.stages, options);
+          puf.setId(currentId); // kind of hacky
+          currentId++;
+          pufs.push(puf);
+        }
+        app.pufs = pufs; // set the global app state to use the new PUFs
+        renderMatrix(data); // re-render the matrix using the new PUFs
+        this.closeModal();
+      },
+      onPufChange() {
+        console.log(this.selectedPufIndex);
+        this.selectedDelta.index = -1;
+        this.selectedDelta.value = 0;
+        this.selectedDelta.level = 0;
+        this.renderDeltaChart();
+      },
+      onUpperBarClicked(event, index) {
+        const { selectedPufIndex } = this;
+        this.selectedDelta.value = this.deltas[selectedPufIndex][index][0];
+        this.selectedDelta.index = index;
+        this.selectedDelta.level = 0;
+      },
+      onLowerBarClicked(event, index) {
+        const { selectedPufIndex } = this;
+        this.selectedDelta.value = this.deltas[selectedPufIndex][index][1];
+        this.selectedDelta.index = index;
+        this.selectedDelta.level = 1;
+      },
       renderDeltaChart() {
-        let data = [{ 0: 1 }, { 0: 2 }, { 0: 3 }, { 0: 4 },];
-        let upperChart = BarChart(data.map(d => d[0]), {
+        let { selectedPufIndex } = this;
+        let data = this.deltas[selectedPufIndex];
+        let upperChart = BarChart(data, {
           x: (d, i) => i + 1,
-          y: d => d,
+          y: d => d[0],
           yFormat: "",
           yLabel: "Value 𝛿(0)",
           yDomain: [-3.5, 3.5], // [ymin, ymax]
           width: 1000,
           height: 250,
-          color: "steelblue"
+          color: "steelblue",
+          onBarClicked: this.onUpperBarClicked
         });
-        let container1 = document.getElementById("xx");
+        let container1 = document.getElementById("upper-chart-container");
         clearContainer(container1);
         container1.appendChild(upperChart);
+
+        let lowerChart = BarChart(data, {
+          x: (d, i) => i + 1,
+          y: d => d[1],
+          yFormat: "",
+          yLabel: "Value 𝛿(1)",
+          yDomain: [-3.5, 3.5], // [ymin, ymax]
+          width: 1000,
+          height: 250,
+          color: "steelblue",
+          onBarClicked: this.onLowerBarClicked
+        });
+        let container2 = document.getElementById("lower-chart-container");
+        clearContainer(container2);
+        container1.appendChild(lowerChart);
+      },
+      resetControls() {
+        this.selectedDelta.value = 0;
+        this.selectedDelta.index = -1;
+        this.selectedDelta.level = 0;
+        this.selectedPufIndex = 0;
+      },
+      saveDeltaValue() {
+        let { selectedPufIndex } = this;
+        let { level, index, value } = this.selectedDelta;
+        this.deltas[selectedPufIndex][index][level] = value;
+        this.renderDeltaChart();
+      },
+      closeModal() {
+        this.activeSection = 1;
+        this.resetControls();
+        $("#upload-data-modal").modal("hide"); // close the modal
+      },
+      async processFile() {
+        const fileInput = document.getElementById("file-input");
+        if (fileInput.files.length === 0) {
+          return;
+        }
+        const selectedFile = fileInput.files[0];
+        try {
+          let json = JSON.parse(await selectedFile.text());
+          console.log(json);
+          if (json.chal_list) {
+            // process challenges
+          }
+          const { puf_delta_matrix } = json;
+          // get deltas
+          // extract the delta values from the JSON file and store them into the app state
+          // so that the user can edit them in the next section
+          let stages = puf_delta_matrix[0].length / 2;
+          this.pufs = puf_delta_matrix.length;
+          this.deltas = puf_delta_matrix.map(dls => {
+            const deltas = [];
+            for (let i = 0; i < stages; i++) {
+              deltas.push({
+                0: dls[i],
+                1: dls[i + stages]
+              });
+            }
+            return deltas;
+          });
+          this.activeSection = 3;
+          Vue.nextTick(() => this.renderDeltaChart());
+          console.log(json);
+        } catch (e) {
+          console.log("Something went wrong")
+        }
       }
     }
   });

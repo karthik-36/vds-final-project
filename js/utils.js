@@ -34,3 +34,22 @@ function clearContainer(container) {
     container.removeChild(container.lastChild);
   }
 }
+
+function generateRandomDeltas({ stages, mean, variance, pufCount }) {
+  const distribution = gaussian(mean, variance);
+  const randoms = distribution.random(2 * stages * pufCount);
+  const pufDeltas = [];
+  let offset = 0;
+  for (let j = 0; j < pufCount; j++) {
+    const deltas = [];
+    for (let i = 0; i < 2 * stages; i += 2) {
+      deltas.push({
+        0: randoms[i + offset],
+        1: randoms[i + 1 + offset]
+      });
+    }
+    pufDeltas.push(deltas);
+    offset += 2 * stages;
+  }
+  return pufDeltas;
+}

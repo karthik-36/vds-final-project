@@ -11,18 +11,7 @@ class PUF {
     this.response = _.memoize(this.response, (challenge, position) => challenge.getValue().toString() + "|" + position).bind(this);
 
     if (fromDeltas) {
-      for (let i=0; i<stages; i++) {
-        this.deltas.push({
-          0: initialDeltas[i],
-          1: initialDeltas[i + stages]
-        });
-      }
-      /*for (let i=0; i<2*stages; i+=2) {
-        this.deltas.push({
-          0: initialDeltas[i],
-          1: initialDeltas[i + 1]
-        });
-      }*/
+      this.deltas = initialDeltas;
       return;  
     }
 
@@ -108,5 +97,11 @@ class PUF {
   // public
   getDeltas() {
     return this.deltas.map(d => ({...d}));
+  }
+
+  // public
+  // use with caution!
+  setId(id) {
+    this.id = id;
   }
 }

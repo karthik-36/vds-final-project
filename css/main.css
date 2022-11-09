@@ -27,3 +27,15 @@ body {
   padding: 15px;
   margin-bottom: 10px;
 }
+
+tr{
+    background-color: antiquewhite;
+
+}
+td{
+    background-color: antiquewhite;
+
+}
+table{
+    color: #000000;
+}

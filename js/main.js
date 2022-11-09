@@ -1,5 +1,5 @@
 const N = 16 + 1;
-let STAGES = 53;
+let STAGES = 4;
 const data = [];
 const side = 20;
 const width = side * N + 15, height = side * N;
@@ -139,7 +139,7 @@ function initPufs() {
   app.pufs = pufs;
 }
 
-/*(function initChallenges() {
+function initChallenges() {
   const challenges = [];
   const D = N - 1;
   for (let i=0; i<D; i++) {
@@ -148,11 +148,11 @@ function initPufs() {
   }
   app.challenges = challenges;
   console.log(app.challenges);
-}*/
+}
 
 //
-// random generating challenges
-function initChallenges() {
+// randomly generating challenges
+/*function initChallenges() {
   const challenges = [];
   const D = N - 1;
   for (let i=0; i<D; i++) {
@@ -166,7 +166,7 @@ function initChallenges() {
   }
   app.challenges = challenges;
   console.log(app.challenges);
-}
+}*/
 
 
 function groupChallenges(bitPosition) {
@@ -248,8 +248,8 @@ function renderMatrix(data) {
         return `P` + app.pufs[d.pufIndex].getId();
       }
       if (d.col === 0) {
-        //return app.challenges[d.challengeIndex].getString()
-        return `C` + (d.challengeIndex + 1);
+        return app.challenges[d.challengeIndex].getString()
+        //return `C` + (d.challengeIndex + 1);
       }
     })
     .attr("y", d => d.y + 0 * side + 15)
@@ -403,7 +403,7 @@ function initializeEventListeners() {
       yLabel: "Value 𝛿(0)",
       yDomain: [-3.5, 3.5], // [ymin, ymax]
       width: 1000,
-      height: 300,
+      height: 250,
       color: "steelblue"
     });
     let container1 = document.getElementById("upper-bar-chart");
@@ -417,7 +417,7 @@ function initializeEventListeners() {
       yDomain: [-3.5, 3.5], // [ymin, ymax]
       yLabel: "Value 𝛿(1)",
       width: 1000,
-      height: 300,
+      height: 250,
       color: "steelblue"
     });
     let container2 = document.getElementById("lower-bar-chart");
@@ -480,7 +480,7 @@ function initializeEventListeners() {
     let histogram_data = [];
     //
     // generating 10,000 random challenges
-    for (let i = 0; i < 10000; i++) { 
+    /*for (let i = 0; i < 10000; i++) { 
       let digits = [];
       let b = generateRandomBinary(STAGES);  //  generating random binary string of length 'STAGES'
       for (let j = 0; j < b.length; j++) {
@@ -491,10 +491,10 @@ function initializeEventListeners() {
       //console.log("challenge " + challenge);
       //console.log("delta " + puf.getResponseValue(challenge));
       histogram_data.push(puf.getResponseValue(challenge));
-    }
-    /*for(let i = 0; i < app.challenges.length; i++ ){
-      histogram_data.push(puf.getResponseValue(app.challenges[i]));
     }*/
+    for(let i = 0; i < app.challenges.length; i++ ){
+      histogram_data.push(puf.getResponseValue(app.challenges[i]));
+    }
     //console.log("histogram_data " + histogram_data);
     //
     // render histogram 

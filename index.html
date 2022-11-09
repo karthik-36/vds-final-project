@@ -31,7 +31,7 @@
                 Challenge Bit Position
               </div>
               <div class="col">
-                <input type="number" class="form-control" id="challenge-bit-position" placeholder="" value="1" min="1" max="4">
+                <input type="number" class="form-control" id="challenge-bit-position" placeholder="" value="1" min="1" max="53">
               </div>
               <div class="col">
                 <button type="button" class="btn btn-primary" id="reorder-rows">Reorder Rows</button>
@@ -123,7 +123,7 @@
               </div>
               <div class="col">
                 <button type="button" class="btn btn-primary" id="view-puf-dna-button" data-bs-toggle="modal" data-bs-target="#bar-chart-modal">View</button>
-                <button type="button" class="btn btn-primary" id="histogram-button" data-bs-toggle="modal" data-bs-target="#bar-chart-modal">Histogram</button>
+                <button type="button" class="btn btn-primary" id="histogram-button" data-bs-toggle="modal" data-bs-target="#histogram-modal">Histogram</button>
               </div>
             </div>
           </div>
@@ -146,18 +146,33 @@
             </div>
             <div class="col">
               <div id="table"></div>
-            </div>
-            
+            </div> 
           </div>
-          
-          
-          
         </div>
         <div class="modal-footer">
         </div>
       </div>
     </div>
   </div>
+
+  <div class="modal modal-xl fade" id="histogram-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Histogram</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div id="histogram-chart"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div>
+  </div>
+
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js" integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk" crossorigin="anonymous"></script>
 <script src="lib/lodash.js"></script>

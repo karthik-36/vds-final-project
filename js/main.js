@@ -1,5 +1,5 @@
 const N = 16 + 1;
-const STAGES = 4;
+let STAGES = 53;
 const data = [];
 const side = 20;
 const width = side * N + 15, height = side * N;
@@ -139,7 +139,7 @@ function initPufs() {
   app.pufs = pufs;
 }
 
-function initChallenges() {
+/*(function initChallenges() {
   const challenges = [];
   const D = N - 1;
   for (let i=0; i<D; i++) {
@@ -147,7 +147,27 @@ function initChallenges() {
     challenges.push(challenge);
   }
   app.challenges = challenges;
+  console.log(app.challenges);
+}*/
+
+//
+// random generating challenges
+function initChallenges() {
+  const challenges = [];
+  const D = N - 1;
+  for (let i=0; i<D; i++) {
+    let digits = [];
+    let b = generateRandomBinary(STAGES);
+    for (let j = 0; j < b.length; j++) {
+      digits.push(Number(b[j]));
+    }
+    let challenge = new Challenge(digits);
+    challenges.push(challenge);
+  }
+  app.challenges = challenges;
+  console.log(app.challenges);
 }
+
 
 function groupChallenges(bitPosition) {
   const C0 = app.challenges.filter(challenge => challenge.getBit(bitPosition) === 0);
@@ -228,7 +248,8 @@ function renderMatrix(data) {
         return `P` + app.pufs[d.pufIndex].getId();
       }
       if (d.col === 0) {
-        return app.challenges[d.challengeIndex].getString()
+        //return app.challenges[d.challengeIndex].getString()
+        return `C` + (d.challengeIndex + 1);
       }
     })
     .attr("y", d => d.y + 0 * side + 15)
@@ -354,6 +375,7 @@ function initializeEventListeners() {
   const reorderColsButton = document.getElementById("reorder-cols");
   const viewPufDnaButton = document.getElementById("view-puf-dna-button");
   const pufNumberSelect = document.getElementById("puf-select");
+  const viewHistogramButton = document.getElementById("histogram-button");
 
   reorderRowsButton.addEventListener("click", function() {
     let challengeBitPosition = parseInt(challengeBitInput.value, 10);
@@ -448,6 +470,52 @@ function initializeEventListeners() {
     
 
   });
+
+
+  // When Histogram button is clicked
+  viewHistogramButton.addEventListener("click", function(e) {
+    let pufId = parseInt(pufNumberSelect.value);
+    let puf = app.pufs.find(puf => puf.getId() === pufId);
+    //
+    let histogram_data = [];
+    //
+    // generating 10,000 random challenges
+    for (let i = 0; i < 10000; i++) { 
+      let digits = [];
+      let b = generateRandomBinary(STAGES);  //  generating random binary string of length 'STAGES'
+      for (let j = 0; j < b.length; j++) {
+        digits.push(Number(b[j]));
+      }
+      let challenge = new Challenge(digits);
+      //
+      //console.log("challenge " + challenge);
+      //console.log("delta " + puf.getResponseValue(challenge));
+      histogram_data.push(puf.getResponseValue(challenge));
+    }
+    /*for(let i = 0; i < app.challenges.length; i++ ){
+      histogram_data.push(puf.getResponseValue(app.challenges[i]));
+    }*/
+    //console.log("histogram_data " + histogram_data);
+    //
+    // render histogram 
+    let histogram = Histogram(histogram_data, {
+      value: d => d,
+      //y: (d, i) => i + 1,
+      label: "∆(n)",
+      yLabel: "Challenges",
+      width: 1000,
+      height: 300,
+      thresholds: 20,
+      color: "steelblue"
+    });
+
+    let container1 = document.getElementById("histogram-chart");
+    clearContainer(container1);
+    container1.appendChild(histogram);
+
+  });
+
+
 
   for (let i=2; i<=STAGES; i++) {
     let option= document.createElement("option");

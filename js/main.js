@@ -24,16 +24,17 @@ var tip = d3.tip().attr('class', 'd3-tip').html((event, d) => {
 });
 
 let c = d3.scaleOrdinal().domain([0, 1]).range(["lightblue", "pink"]);
-
+let c1 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "pink"]);
 
 const realColorScale = d3.scaleSequential(d3.interpolatePRGn).domain([-1, 1]);
 const realColorScaleRed = d3.scaleSequential(d3.interpolateBlues).domain([-1, 1]);
 
 const binaryColorScale = (value) => belowThreshold(value) ? c(0) : c(1);
+const fullColorScale = (value) => c1(value);
 
 // global object to store the app state
 const app = {
-  colorScale: binaryColorScale,
+  colorScale: fullColorScale,
   brushEnabled: false,
   // array of PUF objects
   // they may not be in order of id because if the user applies a sorting operation then they will be reordered
@@ -44,7 +45,6 @@ const app = {
 };
 
 main(); 
-
 
 function populateData() {
   for (let rowIndex = 0; rowIndex < N; rowIndex++) {
@@ -118,7 +118,6 @@ function initChallenges() {
     challenges.push(challenge);
   }
   app.challenges = challenges;
-  console.log(app.challenges);
 }
 
 
@@ -145,6 +144,9 @@ function groupChallenges(bitPosition) {
   C1.sort(parityComparator);
 
   app.challenges = [...C0, ...C1];
+  console.log("here1");
+  console.log(app.challenges);
+  return app.challenges;
 }
 
 function sortPufs(stage, deltaNumber) {
@@ -175,10 +177,10 @@ function renderMatrix(data) {
     .attr("x", d => d.x)
     .attr("class", d => getSquareClass(d) + " node")
     .attr("fill", d => {
-      let puf = app.pufs[d.pufIndex];
-      let chal = app.challenges[d.challengeIndex];
-      let r = puf.getResponse(chal);
-      return app.colorScale(r);
+
+      let pufIndex = d.pufIndex;
+      let challengeIndex = d.challengeIndex;
+      return app.colorScale(app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2));
     })
     .attr("fill-opacity", d => d.selected ? 0.45 : 1)
     .attr("width", side)
@@ -226,17 +228,20 @@ function brushed({ selection }) {
     x1 = Math.floor(x1) - (Math.floor(x1) % side) + side;
     x1 += X_OFFSET;
     y1 = Math.floor(y1) - (Math.floor(y1) % side) + side;
-    console.log(x0, y0, x1, y1);
+    //console.log(x0, y0, x1, y1);
     let selectedData = data.filter(d => x0 <= d.x && d.x < x1 && y0 <= d.y && d.y < y1);
     let sum = 0;
+    let total = 0;
     for (let d of selectedData) {
       let puf = app.pufs[d.pufIndex];
       let challenge = app.challenges[d.challengeIndex];
       let response = puf.getResponse(challenge);
       sum += belowThreshold(response) ? 0 : 1;
+      total++;
     }
-    console.log(`Sum: ${sum}`);
+    //console.log(`Sum: ${sum}`);
     document.getElementById("brush-value").value = sum;
+    document.getElementById("ratio-value").value = sum/total.toFixed(2);
   }
 }
 
@@ -255,11 +260,27 @@ function initializeEventListeners() {
     switch (modeSelect.value) {
       case "brush": {
         app.brushEnabled = true;
-        app.colorScale = binaryColorScale;
+       // app.colorScale = binaryColorScale;
         renderMatrix(data);
       } break;
       case "view": {
         app.brushEnabled = false;
+       // app.colorScale = binaryColorScale;
+        renderMatrix(data);
+      }
+      default: { }
+    }
+  });
+
+
+  const colorSelect = document.getElementById("color-select");
+  colorSelect.addEventListener("change", function (e) {
+    switch (colorSelect.value) {
+      case "colorRange": {
+        app.colorScale = fullColorScale;
+        renderMatrix(data);
+      } break;
+      case "binaryColor": {
         app.colorScale = binaryColorScale;
         renderMatrix(data);
       }
@@ -278,7 +299,9 @@ function initializeEventListeners() {
 
   reorderRowsButton.addEventListener("click", function() {
     let challengeBitPosition = parseInt(challengeBitInput.value, 10);
+
     groupChallenges(challengeBitPosition);
+
     renderMatrix(data);
   });
 
@@ -349,13 +372,13 @@ function initializeEventListeners() {
     cells = rows.selectAll("td")
       // each row has data associated; we get it and enter it for the cells.
       .data(function(d) {
-          //console.log(d);
+  
           return d;
       })
       .enter()
       .append("td")
       .text(function(d) {
-        //console.log(d);
+
         return d;
       });
       

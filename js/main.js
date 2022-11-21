@@ -97,6 +97,10 @@ function main() {
 
   renderMatrix(data);
 
+  // landing page charts for #PUF 1
+  renderBarCharts(1);
+  renderHistogram(1);
+
   document.getElementById("matrix").append(svg.node());
   initializeEventListeners();
 }
@@ -290,39 +294,11 @@ function initializeEventListeners() {
   });
 
   viewPufDnaButton.addEventListener("click", function(e) {
-    let pufId = parseInt(pufNumberSelect.value);
-    let puf = app.pufs.find(puf => puf.getId() === pufId);
-    let data = puf.getDeltas();
+    //
+    document.getElementById("PUF-num").textContent = `#PUF: ${pufNumberSelect.value}`;
 
-    // Reference: https://observablehq.com/@d3/bar-chart
-    let upperChart = BarChart(data.map(d => d[0]), {
-      x: (d, i) => i + 1,
-      y: d => d,
-      yFormat: "",
-      yLabel: "Value 𝛿(0)",
-      yDomain: [-3.5, 3.5], // [ymin, ymax]
-      width: 1000,
-      height: 250,
-      color: "steelblue"
-    });
-    let container1 = document.getElementById("upper-bar-chart");
-    clearContainer(container1);
-    container1.appendChild(upperChart);
-
-    let lowerChart = BarChart(data.map(d => d[1]), {
-      x: (d, i) => i + 1,
-      y: d => d,
-      yFormat: "",
-      yDomain: [-3.5, 3.5], // [ymin, ymax]
-      yLabel: "Value 𝛿(1)",
-      width: 1000,
-      height: 250,
-      color: "steelblue"
-    });
-    let container2 = document.getElementById("lower-bar-chart");
-    clearContainer(container2);
-    container2.appendChild(lowerChart);
-
+    renderBarCharts(pufNumberSelect.value);
+    /*
     let tableData = []
     for (i = 0; i < data.length; i++) {
       tableData.push([i+1, ' ', data[i][0], ' ', data[i][1]]);
@@ -362,38 +338,17 @@ function initializeEventListeners() {
     let container3 = document.getElementById("table");
     clearContainer(container3);
     container3.appendChild(table.node());
-    
+    */
 
   });
 
 
   // When Histogram button is clicked
   viewHistogramButton.addEventListener("click", function(e) {
-    let pufId = parseInt(pufNumberSelect.value);
-    let puf = app.pufs.find(puf => puf.getId() === pufId);
     //
-    let histogram_data = [];
-    
-    for(let i = 0; i < app.challenges.length; i++ ){
-      histogram_data.push(puf.getResponseValue(app.challenges[i]));
-    }
-   
-    // render histogram 
-    let histogram = Histogram(histogram_data, {
-      value: d => d,
-      //y: (d, i) => i + 1,
-      label: "∆(n)",
-      yLabel: "Challenges",
-      width: 1000,
-      height: 300,
-      thresholds: 20,
-      color: "steelblue"
-    });
+    document.getElementById("PUF-num").textContent = `#PUF: ${pufNumberSelect.value}`;
 
-    let container1 = document.getElementById("histogram-chart");
-    clearContainer(container1);
-    container1.appendChild(histogram);
-
+    renderHistogram(pufNumberSelect.value);
   });
 
 
@@ -406,6 +361,8 @@ function initializeEventListeners() {
   }
 
   document.getElementById("stages-display").textContent = `Number of stages: ${STAGES}`;
+
+  document.getElementById("PUF-num").textContent = `#PUF: ${pufNumberSelect.value}`;
 }
 
 function clearSelection(data) {
@@ -414,18 +371,68 @@ function clearSelection(data) {
   }
 }
 
+//
+function renderBarCharts(pufNum) {
+  let pufId = parseInt(pufNum);
+  let puf = app.pufs.find(puf => puf.getId() === pufId);
+  let data = puf.getDeltas();
 
-
-
-function renderHistogram(data) {
-  return Histogram(data.filter(d => !d.isDragHandle), {
-    value: d => d.data.value,
-    label: "Value →",
-    width: 500,
-    height: 500,
-    thresholds: 10,
+  // Reference: https://observablehq.com/@d3/bar-chart
+  let upperChart = BarChart(data.map(d => d[0]), {
+    x: (d, i) => i + 1,
+    y: d => d,
+    yFormat: "",
+    yLabel: "Value 𝛿(0)",
+    yDomain: [-3.5, 3.5], // [ymin, ymax]
+    width: 400,
+    height: 150,
     color: "steelblue"
-  })
+  });
+  let container1 = document.getElementById("upper-bar-chart");
+  clearContainer(container1);
+  container1.appendChild(upperChart);
+
+  let lowerChart = BarChart(data.map(d => d[1]), {
+    x: (d, i) => i + 1,
+    y: d => d,
+    yFormat: "",
+    yDomain: [-3.5, 3.5], // [ymin, ymax]
+    yLabel: "Value 𝛿(1)",
+    width: 400,
+    height: 150,
+    color: "steelblue"
+  });
+  let container2 = document.getElementById("lower-bar-chart");
+  clearContainer(container2);
+  container2.appendChild(lowerChart);
+}
+
+
+function renderHistogram(pufNum) {
+  let pufId = parseInt(pufNum);
+  let puf = app.pufs.find(puf => puf.getId() === pufId);
+  //
+  let histogram_data = [];
+  
+  for(let i = 0; i < app.challenges.length; i++ ){
+    histogram_data.push(puf.getResponseValue(app.challenges[i]));
+  }
+  
+  // render histogram 
+  let histogram = Histogram(histogram_data, {
+    value: d => d,
+    label: "∆(n)",
+    yLabel: "Challenges",
+    width: 400,
+    height: 150,
+    thresholds: 20,
+    color: "steelblue"
+  });
+
+  let container1 = document.getElementById("histogram-chart");
+  clearContainer(container1);
+  container1.appendChild(histogram);
+
 }
 
 function belowThreshold(value) {

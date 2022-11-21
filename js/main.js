@@ -1,18 +1,18 @@
 let N = 16 + 1;
 let STAGES = 4;
-const data = [];
+let data = [];
 let side = 20;
 let width = side * N + 15, height = side * N;
-const E = side * 0.05
+let E = side * 0.05;
 const colors = ["pink", "aqua", "lightgreen"];
 let svg, heatmapSvg, histogramSvg;
 let id = 0;
 let selectedRowIndex = null;
 let selectedColIndex = null;
 var context = null;
-const X_OFFSET = 10;
+const X_OFFSET = 0;
 const textStyle = `
-  font-size: 10px;
+  font-size: 3px;
 `;
 
 const brush = d3.brush().on("end", brushed);
@@ -23,7 +23,7 @@ var tip = d3.tip().attr('class', 'd3-tip').html((event, d) => {
   return app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2);
 });
 
-let c = d3.scaleOrdinal().domain([0, 1]).range(["lightblue", "pink"]);
+let c = d3.scaleOrdinal().domain([0, 1]).range(["lightblue", "darkblue"]);
 
 
 const realColorScale = d3.scaleSequential(d3.interpolatePRGn).domain([-1, 1]);
@@ -190,28 +190,27 @@ function renderMatrix(data) {
       let r = puf.getResponse(chal);
       return app.colorScale(r);
     })
-    .attr("fill-opacity", d => d.selected ? 0.45 : 1)
     .attr("width", side)
     .attr("height", side)
 
-  svg.selectAll(".label")
-    .data(data.filter(d => d.isDragHandle), d => d.id)
-    .join("text")
-    .text(d => {
-      if (d.row === 0 && d.col === 0) {
-        return "";
-      }
-      if (d.row === 0) {
-        return `P` + app.pufs[d.pufIndex].getId();
-      }
-      if (d.col === 0) {
-        return app.challenges[d.challengeIndex].getString()
-      }
-    })
-    .attr("y", d => d.y + 0 * side + 15)
-    .attr("x", d => d.x + 0 * side + 0)
-    .attr("class", d => getSquareClass(d) + " label")
-    .attr("style", textStyle)
+  // svg.selectAll(".label")
+  //   .data(data.filter(d => d.isDragHandle), d => d.id)
+  //   .join("text")
+  //   .text(d => {
+  //     if (d.row === 0 && d.col === 0) {
+  //       return "";
+  //     }
+  //     if (d.row === 0) {
+  //       return `P` + app.pufs[d.pufIndex].getId();
+  //     }
+  //     if (d.col === 0) {
+  //       return app.challenges[d.challengeIndex].getString()
+  //     }
+  //   })
+  //   .attr("y", d => d.y + 0 * side + 15)
+  //   .attr("x", d => d.x + 0 * side + 0)
+  //   .attr("class", d => getSquareClass(d) + " label")
+  //   .attr("style", textStyle)
 
   if (app.brushEnabled) {
     context.call(brush);

@@ -39,3 +39,11 @@ td{
 table{
     color: #000000;
 }
+
+.toast-header {
+    display: flex;
+}
+
+.toast-header strong {
+    flex: 1;
+}

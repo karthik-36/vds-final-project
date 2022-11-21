@@ -37,4 +37,13 @@ class Challenge {
         }
         return parity;
     }
+
+    static createChallengeFromBinaryString(string) {
+        for (let ch of string) {
+            if (!(ch === "0" || ch === "1")) {
+                throw new Error("invalid binary string");
+            }
+        }
+        return new Challenge(string.split("").map(ch => parseInt(ch, 10)));
+    }
 }

@@ -12,7 +12,8 @@ function createModalVueApp(template) {
         mu: 0,
         sigma: 1,
         stages: 4,
-        pufs: 16,
+        pufs: 64,
+        challenges: [],
         activeSection: 1,
         deltas: [],
         selectedPufIndex: 0,
@@ -55,6 +56,13 @@ function createModalVueApp(template) {
           pufs.push(puf);
         }
         app.pufs = pufs; // set the global app state to use the new PUFs
+        if (this.challenges.length === 0) {
+          app.challenges = generateRandomChallenges(this.stages, this.pufs); // set the global app state to use the new challenges
+          Utils.toast("Challenges generated randomly");
+        } else {
+          app.challenges = this.challenges;
+        }
+        computeNewStateData(this.stages, pufs.length + 1);
         renderMatrix(data); // re-render the matrix using the new PUFs
         this.closeModal();
       },
@@ -115,6 +123,7 @@ function createModalVueApp(template) {
         this.selectedDelta.index = -1;
         this.selectedDelta.level = 0;
         this.selectedPufIndex = 0;
+        this.challenges = [];
       },
       saveDeltaValue() {
         let { selectedPufIndex } = this;
@@ -138,6 +147,9 @@ function createModalVueApp(template) {
           console.log(json);
           if (json.chal_list) {
             // process challenges
+            let challenges = json.chal_list.map(string => Challenge.createChallengeFromBinaryString(string));
+            this.challenges = challenges;
+            Utils.toast("challenges read from file");
           }
           const { puf_delta_matrix } = json;
           // get deltas

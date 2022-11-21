@@ -1,8 +1,8 @@
-const N = 16 + 1;
+let N = 16 + 1;
 let STAGES = 4;
 const data = [];
-const side = 20;
-const width = side * N + 15, height = side * N;
+let side = 20;
+let width = side * N + 15, height = side * N;
 const E = side * 0.05
 const colors = ["pink", "aqua", "lightgreen"];
 let svg, heatmapSvg, histogramSvg;
@@ -45,6 +45,16 @@ const app = {
 
 main(); 
 
+function computeNewStateData(stages, n) {
+  STAGES = stages;
+  N = n;
+  side = (17*20) / N;
+  width = side * N + 15;
+  height = side * N;
+  E = side * 0.05;
+  data = [];
+  populateData();
+}
 
 function populateData() {
   for (let rowIndex = 0; rowIndex < N; rowIndex++) {

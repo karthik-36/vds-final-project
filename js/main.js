@@ -293,65 +293,10 @@ function initializeEventListeners() {
     renderMatrix(data);
   });
 
-  viewPufDnaButton.addEventListener("click", function(e) {
-    //
-    document.getElementById("PUF-num").textContent = `#PUF: ${pufNumberSelect.value}`;
-
+  pufNumberSelect.addEventListener("change", () => {
     renderBarCharts(pufNumberSelect.value);
-    /*
-    let tableData = []
-    for (i = 0; i < data.length; i++) {
-      tableData.push([i+1, ' ', data[i][0], ' ', data[i][1]]);
-    }
-    
-    // Reference: http://bl.ocks.org/yan2014/c9dd6919658991d33b87
-    // render the table
-    var table = d3.select("#table").append("table");
-
-    var header = table.append("thead").append("tr");
-    header
-      .selectAll("th")
-      .data(['Stage',' ', 'delta0', ' ', 'delta1'])
-      .enter()
-      .append("th")
-      .text(function(d) { return d; });
-    var tablebody = table.append("tbody");
-    rows = tablebody
-      .selectAll("tr")
-      .data(tableData)
-      .enter()
-      .append("tr");
-    // We built the rows using the nested array - now each row has its own array.
-    cells = rows.selectAll("td")
-      // each row has data associated; we get it and enter it for the cells.
-      .data(function(d) {
-          //console.log(d);
-          return d;
-      })
-      .enter()
-      .append("td")
-      .text(function(d) {
-        //console.log(d);
-        return d;
-      });
-      
-    let container3 = document.getElementById("table");
-    clearContainer(container3);
-    container3.appendChild(table.node());
-    */
-
-  });
-
-
-  // When Histogram button is clicked
-  viewHistogramButton.addEventListener("click", function(e) {
-    //
-    document.getElementById("PUF-num").textContent = `#PUF: ${pufNumberSelect.value}`;
-
     renderHistogram(pufNumberSelect.value);
   });
-
-
 
   for (let i=2; i<=STAGES; i++) {
     let option= document.createElement("option");
@@ -378,31 +323,31 @@ function renderBarCharts(pufNum) {
   let data = puf.getDeltas();
 
   // Reference: https://observablehq.com/@d3/bar-chart
+  let container1 = document.getElementById("upper-bar-chart");
   let upperChart = BarChart(data.map(d => d[0]), {
     x: (d, i) => i + 1,
     y: d => d,
     yFormat: "",
     yLabel: "Value 𝛿(0)",
     yDomain: [-3.5, 3.5], // [ymin, ymax]
-    width: 400,
+    width: container1.clientWidth,
     height: 150,
     color: "steelblue"
   });
-  let container1 = document.getElementById("upper-bar-chart");
   clearContainer(container1);
   container1.appendChild(upperChart);
 
+  let container2 = document.getElementById("lower-bar-chart");
   let lowerChart = BarChart(data.map(d => d[1]), {
     x: (d, i) => i + 1,
     y: d => d,
     yFormat: "",
     yDomain: [-3.5, 3.5], // [ymin, ymax]
     yLabel: "Value 𝛿(1)",
-    width: 400,
+    width: container2.clientWidth,
     height: 150,
     color: "steelblue"
   });
-  let container2 = document.getElementById("lower-bar-chart");
   clearContainer(container2);
   container2.appendChild(lowerChart);
 }
@@ -417,19 +362,19 @@ function renderHistogram(pufNum) {
   for(let i = 0; i < app.challenges.length; i++ ){
     histogram_data.push(puf.getResponseValue(app.challenges[i]));
   }
+  let container1 = document.getElementById("histogram-chart");
   
   // render histogram 
   let histogram = Histogram(histogram_data, {
     value: d => d,
     label: "∆(n)",
     yLabel: "Challenges",
-    width: 400,
+    width: container1.clientWidth,
     height: 150,
     thresholds: 20,
     color: "steelblue"
   });
 
-  let container1 = document.getElementById("histogram-chart");
   clearContainer(container1);
   container1.appendChild(histogram);
 

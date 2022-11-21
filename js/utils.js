@@ -52,4 +52,16 @@ function generateRandomDeltas({ stages, mean, variance, pufCount }) {
     offset += 2 * stages;
   }
   return pufDeltas;
+//
+function randomDigit() {
+  return Math.floor(Math.random() * Math.floor(2));
+}
+
+// Random binary string 
+function generateRandomBinary(binaryLength) {
+  let binary = "";
+  for(let i = 0; i < binaryLength; ++i) {
+      binary += randomDigit();
+  }
+  return binary;
 }

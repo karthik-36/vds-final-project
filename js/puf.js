@@ -17,12 +17,6 @@ class PUF {
           1: initialDeltas[i + stages]
         });
       }
-      /*for (let i=0; i<2*stages; i+=2) {
-        this.deltas.push({
-          0: initialDeltas[i],
-          1: initialDeltas[i + 1]
-        });
-      }*/
       return;  
     }
 

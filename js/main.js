@@ -129,6 +129,7 @@ function groupChallenges(bitPosition) {
     const parity1 = challenge1.getParity(bitPosition + 1);
     const parity2 = challenge2.getParity(bitPosition + 1);
 
+    
     if (isEven(parity1) && isEven(parity2)) {
       return 0;
     } else if (isEven(parity1) && isOdd(parity2)) {
@@ -144,7 +145,6 @@ function groupChallenges(bitPosition) {
   C1.sort(parityComparator);
 
   app.challenges = [...C0, ...C1];
-  console.log("here1");
   console.log(app.challenges);
   return app.challenges;
 }

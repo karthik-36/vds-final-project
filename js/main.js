@@ -24,20 +24,45 @@ var tip = d3.tip().attr('class', 'd3-tip').html((event, d) => {
 });
 
 
-let c1 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "pink"]);
+let cRange = d3.scaleSequential().domain([0, 1]).range(["lightblue", "pink"]);
 let c = d3.scaleOrdinal().domain([0, 1]).range(["lightblue", "darkblue"]);
 
 
 const realColorScale = d3.scaleSequential(d3.interpolatePRGn).domain([-1, 1]);
 const realColorScaleRed = d3.scaleSequential(d3.interpolateBlues).domain([-1, 1]);
 
-const binaryColorScale = (value) => belowThreshold(value) ? c(0) : c(1);
-const fullColorScale = (value) => c1(value);
+
+let c1 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "green"]);
+let c2 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "orange"]);
+let c3 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "yellow"]);
+let c4 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "blue"]);
+
+
+// let c1 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "green"]);
+// let c2 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "orange"]);
+// let c3 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "yellow"]);
+// let c4 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "blue"]);
+
+const binaryColorScale = (value,row) => row === null?  belowThreshold(value) ? c(0) : c(1) : (
+
+  (row < app.group[0]) ? (belowThreshold(value) ? c1(0) : c1(1)) : (row < app.group[0] + app.group[1]) ? (belowThreshold(value) ? c2(0) : c2(1)) :  (row < app.group[0] + app.group[1] + app.group[2]) ? (belowThreshold(value) ? c3(0) : c3(1)) : (belowThreshold(value) ? c4(0) : c4(1))
+  
+ );
+const fullColorScale = (value,row) => row === null? cRange(value) : (
+  row < app.group[0] ? c1(value) : (row < app.group[0] + app.group[1]) ?  c2(value)  :  (row < app.group[0] + app.group[1] + app.group[2]) ? c3(value)  : c4(value) 
+
+);
+
+
+
+
 
 // global object to store the app state
 const app = {
   colorScale: fullColorScale,
+  splitState: false,
   brushEnabled: false,
+  group :[],
   // array of PUF objects
   // they may not be in order of id because if the user applies a sorting operation then they will be reordered
   pufs: [],
@@ -221,6 +246,9 @@ function sortPufs(stage, deltaNumber) {
 
 function renderMatrix(data) {
   // clear the matrix
+
+  let group = getGroupSizes();
+  app.group = group;
   if (context) {
     context.remove();
   }
@@ -235,10 +263,18 @@ function renderMatrix(data) {
     .attr("x", d => d.x)
     .attr("class", d => getSquareClass(d) + " node")
     .attr("fill", d => {
-
+      
+      console.log(group);
+      console.log(d);
       let pufIndex = d.pufIndex;
       let challengeIndex = d.challengeIndex;
-      return app.colorScale(app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2));
+
+      if(app.splitState){
+        return app.colorScale(app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2), d.row);
+      }else{
+        return app.colorScale(app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2),null);
+      }
+      
     })
     .attr("width", side)
     .attr("height", side)
@@ -343,6 +379,22 @@ function initializeEventListeners() {
       } break;
       case "binaryColor": {
         app.colorScale = binaryColorScale;
+        renderMatrix(data);
+      }
+      default: { }
+    }
+  });
+
+  const splitSelect = document.getElementById("split-select");
+  splitSelect.addEventListener("change", function (e) {
+    console.log(splitSelect.value);
+    switch (splitSelect.value) {
+      case "normal": {
+        app.splitState = false;
+        renderMatrix(data);
+      } break;
+      case "split": {
+        app.splitState = true;
         renderMatrix(data);
       }
       default: { }

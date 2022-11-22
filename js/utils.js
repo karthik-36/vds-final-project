@@ -35,6 +35,24 @@ function clearContainer(container) {
   }
 }
 
+function generateRandomDeltas({ stages, mean, variance, pufCount }) {
+  const distribution = gaussian(mean, variance);
+  const randoms = distribution.random(2 * stages * pufCount);
+  const pufDeltas = [];
+  let offset = 0;
+  for (let j = 0; j < pufCount; j++) {
+    const deltas = [];
+    for (let i = 0; i < 2 * stages; i += 2) {
+      deltas.push({
+        0: randoms[i + offset],
+        1: randoms[i + 1 + offset]
+      });
+    }
+    pufDeltas.push(deltas);
+    offset += 2 * stages;
+  }
+  return pufDeltas;
+}
 //
 function randomDigit() {
   return Math.floor(Math.random() * Math.floor(2));
@@ -47,4 +65,22 @@ function generateRandomBinary(binaryLength) {
       binary += randomDigit();
   }
   return binary;
+}
+
+function generateRandomChallenges(stages, count) {
+  let challenges = [];
+  for (let i=0; i<count; i++) {
+    let binaryString = generateRandomBinary(stages);
+    let binaryVector = binaryString.split("").map(ch => parseInt(ch, 10));
+    let challenge = new Challenge(binaryVector);
+    challenges.push(challenge);
+  }
+  return challenges;
+}
+
+const Utils = {
+  toast(message) {
+    document.getElementById("toast-body").textContent = message;
+    $('#alert-toast').toast('show')
+  }
 }

@@ -10,16 +10,14 @@
   .sidebar{
     background: #e8e8e8;
     flex: 1;    
+    padding-left: 0px;
+    padding-right: 0;
+  }
+  .sidebar > div.row {
+    padding: 0 10px 0 10px;
   }
   
   .sidebar .nav-links{
-    margin-top: 10px;
-    padding-left: 0;
-  }
-  .sidebar .nav-links li{
-    position: relative;
-    list-style: none;
-    height: 60px;
   }
   
   .sidebar .nav-links li:hover{
@@ -48,30 +46,21 @@
   }
   
   .home-section{
-    flex: 6;
-    /* position: relative;
-    min-height: 100%;
-    width: calc(100% - 180px);
-    left: 180px; */
-    /*background: burlywood;*/
+    flex: 10;
+    display: flex;
   }
   .home-section .left{
-    position: relative;
-    float: left;
-    width: 55%;
-    height: 100%;
-    padding-left: 20px;
-    padding-top: 10px;
+    flex: 1;
+    padding-left: 5px;
+    padding-right: 5px;
   }
   
   .home-section .right{
-    position: relative;
-    float: right;
-    height: 100%;
-    width: 45%;
-    padding-left: 20px;
-    padding-top: 10px;
-    
+    flex: 1;
+  }
+  .home-section .left h4, .home-section .left h5 {
+    padding: 10px 0 10px 10px;
+    margin-bottom: 0;
   }
   
   .home-section .right .chart1{
@@ -90,3 +79,39 @@
     font-weight: bold;
     color: green;
   }
+.right {
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.row.input-wrapper {
+    /* padding-bottom: 15px; */
+}
+
+tr{
+    background-color: antiquewhite;
+
+}
+td{
+    background-color: antiquewhite;
+
+}
+table{
+    color: #000000;
+}
+
+.toast-header {
+    display: flex;
+}
+
+.toast-header strong {
+    flex: 1;
+}
+
+#puf-select {
+    width: 50%;
+}
+
+.card1 {
+    padding-bottom: 35px;
+}

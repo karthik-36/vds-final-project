@@ -1,18 +1,18 @@
-const N = 16 + 1;
+let N = 16 + 0;
 let STAGES = 4;
-const data = [];
-const side = 20;
-const width = side * N + 15, height = side * N;
-const E = side * 0.05
+let data = [];
+let side = 20;
+let width = side * N + 15, height = side * N;
+let E = side * 0.05;
 const colors = ["pink", "aqua", "lightgreen"];
 let svg, heatmapSvg, histogramSvg;
 let id = 0;
 let selectedRowIndex = null;
 let selectedColIndex = null;
 var context = null;
-const X_OFFSET = 10;
+const X_OFFSET = 0;
 const textStyle = `
-  font-size: 10px;
+  font-size: 3px;
 `;
 
 const brush = d3.brush().on("end", brushed);
@@ -23,7 +23,7 @@ var tip = d3.tip().attr('class', 'd3-tip').html((event, d) => {
   return app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2);
 });
 
-let c = d3.scaleOrdinal().domain([0, 1]).range(["lightblue", "pink"]);
+let c = d3.scaleOrdinal().domain([0, 1]).range(["lightblue", "darkblue"]);
 
 
 const realColorScale = d3.scaleSequential(d3.interpolatePRGn).domain([-1, 1]);
@@ -45,35 +45,65 @@ const app = {
 
 main(); 
 
+function computeNewStateData(stages, n) {
+  STAGES = stages;
+  N = n;
+  side = (16*20) / N;
+  width = side * N + 15;
+  height = side * N;
+  E = side * 0.05;
+  data = [];
+  populateData();
+}
+
+function syncInputsWithState() {
+  const stageInput = document.getElementById("stage-number");
+  const challengeBitInput = document.getElementById("challenge-bit-position");
+  const pufNumberSelect = document.getElementById("puf-select");
+  const stagesDisplay = document.getElementById("stages-display");
+
+  clearContainer(stageInput);
+  for (let i=1; i<=STAGES; i++) {
+    let option= document.createElement("option");
+    option.value = i;
+    option.innerHTML = i;
+    if (i === 1) {
+      option.selected = true;
+    }
+    stageInput.appendChild(option);
+  }
+
+  challengeBitInput.setAttribute("max", STAGES);
+  stageInput.setAttribute("max", STAGES);
+  challengeBitInput.setAttribute("value", 1);
+
+  clearContainer(pufNumberSelect);
+  for (let i=1; i<=app.pufs.length; i++) {
+    let option= document.createElement("option");
+    option.value = i;
+    option.innerHTML = i;
+    if (i === 1) {
+      option.selected = true;
+    }
+    pufNumberSelect.appendChild(option);
+  }
+
+  stagesDisplay.textContent = `Number of stages: ${STAGES}`;
+}
 
 function populateData() {
   for (let rowIndex = 0; rowIndex < N; rowIndex++) {
     for (let colIndex = 0; colIndex < N; colIndex++) {
-      if (rowIndex == 0 || colIndex === 0) {
-        data.push({
-          x: colIndex * side,
-          y: rowIndex * side,
-          row: rowIndex, col: colIndex,
-          selected: false,
-          id: id++,
-          isDragHandle: true,
-          pufIndex: colIndex - 1,
-          challengeIndex: rowIndex - 1,
-          isRowDragHandle: colIndex === 0,
-          isColDragHandle: rowIndex === 0
-        });
-      } else {
-        data.push({
-          x: colIndex * side,
-          y: rowIndex * side,
-          row: rowIndex, col: colIndex,
-          pufIndex: colIndex - 1,
-          challengeIndex: rowIndex - 1,
-          isDragHandle: false,
-          id: id++,
-          data: {}
-        });
-      }
+      data.push({
+        x: colIndex * side,
+        y: rowIndex * side,
+        row: rowIndex, col: colIndex,
+        pufIndex: colIndex,
+        challengeIndex: rowIndex,
+        isDragHandle: false,
+        id: id++,
+        data: {}
+      });
     }
   }
   data.forEach(d => {
@@ -107,7 +137,7 @@ function main() {
 
 function initPufs() {
   const pufs = [];
-  const D = N - 1;
+  const D = N - 0;
   for (let i=0; i<D; i++) {
     pufs.push(new PUF(STAGES));
   }
@@ -116,7 +146,7 @@ function initPufs() {
 
 function initChallenges() {
   const challenges = [];
-  const D = N - 1;
+  const D = N - 0;
   for (let i=0; i<D; i++) {
     let challenge = new Challenge(toBinaryVector(i));
     challenges.push(challenge);
@@ -184,28 +214,27 @@ function renderMatrix(data) {
       let r = puf.getResponse(chal);
       return app.colorScale(r);
     })
-    .attr("fill-opacity", d => d.selected ? 0.45 : 1)
     .attr("width", side)
     .attr("height", side)
 
-  svg.selectAll(".label")
-    .data(data.filter(d => d.isDragHandle), d => d.id)
-    .join("text")
-    .text(d => {
-      if (d.row === 0 && d.col === 0) {
-        return "";
-      }
-      if (d.row === 0) {
-        return `P` + app.pufs[d.pufIndex].getId();
-      }
-      if (d.col === 0) {
-        return app.challenges[d.challengeIndex].getString()
-      }
-    })
-    .attr("y", d => d.y + 0 * side + 15)
-    .attr("x", d => d.x + 0 * side + 0)
-    .attr("class", d => getSquareClass(d) + " label")
-    .attr("style", textStyle)
+  // svg.selectAll(".label")
+  //   .data(data.filter(d => d.isDragHandle), d => d.id)
+  //   .join("text")
+  //   .text(d => {
+  //     if (d.row === 0 && d.col === 0) {
+  //       return "";
+  //     }
+  //     if (d.row === 0) {
+  //       return `P` + app.pufs[d.pufIndex].getId();
+  //     }
+  //     if (d.col === 0) {
+  //       return app.challenges[d.challengeIndex].getString()
+  //     }
+  //   })
+  //   .attr("y", d => d.y + 0 * side + 15)
+  //   .attr("x", d => d.x + 0 * side + 0)
+  //   .attr("class", d => getSquareClass(d) + " label")
+  //   .attr("style", textStyle)
 
   if (app.brushEnabled) {
     context.call(brush);
@@ -223,16 +252,17 @@ function brushed({ selection }) {
   if (selection) {
     let [[x0, y0], [x1, y1]] = selection;
     x0 -= X_OFFSET;
-    x0 = Math.floor(x0) - (Math.floor(x0) % side);
+    x0 = Math.floor(x0 / side) * side;
     x0 += X_OFFSET;
-    y0 = Math.floor(y0) - (Math.floor(y0) % side);
+    y0 = Math.floor(y0 / side) * side;
     x1 -= X_OFFSET;
-    x1 = Math.floor(x1) - (Math.floor(x1) % side) + side;
+    x1 = Math.floor(x1 / side) * side + side;
     x1 += X_OFFSET;
-    y1 = Math.floor(y1) - (Math.floor(y1) % side) + side;
+    y1 = Math.floor(y1 / side) * side + side;
     console.log(x0, y0, x1, y1);
     let selectedData = data.filter(d => x0 <= d.x && d.x < x1 && y0 <= d.y && d.y < y1);
     let sum = 0;
+    console.log(selectedData);
     for (let d of selectedData) {
       let puf = app.pufs[d.pufIndex];
       let challenge = app.challenges[d.challengeIndex];
@@ -276,9 +306,9 @@ function initializeEventListeners() {
   const challengeBitInput = document.getElementById("challenge-bit-position");
   const reorderRowsButton = document.getElementById("reorder-rows");
   const reorderColsButton = document.getElementById("reorder-cols");
-  const viewPufDnaButton = document.getElementById("view-puf-dna-button");
+  // const viewPufDnaButton = document.getElementById("view-puf-dna-button");
   const pufNumberSelect = document.getElementById("puf-select");
-  const viewHistogramButton = document.getElementById("histogram-button");
+  // const viewHistogramButton = document.getElementById("histogram-button");
 
   reorderRowsButton.addEventListener("click", function() {
     let challengeBitPosition = parseInt(challengeBitInput.value, 10);
@@ -306,8 +336,6 @@ function initializeEventListeners() {
   }
 
   document.getElementById("stages-display").textContent = `Number of stages: ${STAGES}`;
-
-  document.getElementById("PUF-num").textContent = `#PUF: ${pufNumberSelect.value}`;
 }
 
 function clearSelection(data) {

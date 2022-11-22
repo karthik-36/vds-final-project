@@ -259,6 +259,10 @@ function brushed({ selection }) {
     x1 = Math.floor(x1 / side) * side + side;
     x1 += X_OFFSET;
     y1 = Math.floor(y1 / side) * side + side;
+    x0 = Utils.round(x0, 3);
+    x1 = Utils.round(x1, 3);
+    y0 = Utils.round(y0, 3);
+    y1 = Utils.round(y1, 3);
     console.log(x0, y0, x1, y1);
     let selectedData = data.filter(d => x0 <= d.x && d.x < x1 && y0 <= d.y && d.y < y1);
     let sum = 0;

@@ -82,5 +82,8 @@ const Utils = {
   toast(message) {
     document.getElementById("toast-body").textContent = message;
     $('#alert-toast').toast('show')
+  },
+  round(value, places) {
+    return Math.round((value + Number.EPSILON) * (10 ** places)) / (10 ** places);
   }
 }

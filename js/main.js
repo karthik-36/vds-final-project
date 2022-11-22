@@ -181,6 +181,27 @@ function groupChallenges(bitPosition) {
   app.challenges = [...C0, ...C1];
 }
 
+function getGroupSizes() {
+  const challengeBitInput = document.getElementById("challenge-bit-position");
+  const bitPosition = parseInt(challengeBitInput.value, 10);
+  const challengeLength = app.challenges[0].getLength();
+
+  if (bitPosition >= challengeLength) {
+    throw new Error("Cannot group challenges because parity calculation substring has length 0");
+  }
+  const C0_even = app.challenges.filter(challenge => challenge.getBit(bitPosition) === 0 && isEven(challenge.getParity(bitPosition + 1)));
+  const C0_odd = app.challenges.filter(challenge => challenge.getBit(bitPosition) === 0 && isOdd(challenge.getParity(bitPosition + 1)));
+  const C1_even = app.challenges.filter(challenge => challenge.getBit(bitPosition) === 1 && isEven(challenge.getParity(bitPosition + 1)));
+  const C1_odd = app.challenges.filter(challenge => challenge.getBit(bitPosition) === 1 && isOdd(challenge.getParity(bitPosition + 1)));
+
+  return [
+    C0_even.length,
+    C0_odd.length,
+    C1_even.length,
+    C1_odd.length
+  ];
+}
+
 function sortPufs(stage, deltaNumber) {
   if (deltaNumber === 0) {
     app.pufs.sort((p1, p2) => p1.getDelta0(stage) - p2.getDelta0(stage));

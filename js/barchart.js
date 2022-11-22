@@ -19,6 +19,7 @@ function BarChart(data, {
     xPadding = 0.9, // amount of x-range to reserve to separate bars
     yFormat, // a format specifier string for the y-axis
     yLabel, // a label for the y-axis
+    onBarClicked = () => 0,
     color = "currentColor" // bar fill color
   } = {}) {
     // Compute values.
@@ -84,7 +85,10 @@ function BarChart(data, {
             return yScale(Y[i]);
         })
         .attr("height", i => Math.abs(yScale(0) - yScale(Y[i])))
-        .attr("width", xScale.bandwidth());
+        .attr("width", xScale.bandwidth())
+        .on("mouseover", function() { d3.select(this).attr("fill", "red"); })
+        .on("mouseout", function() { d3.select(this).attr("fill", "steelblue"); })
+        .on("click", onBarClicked);
   
     if (title) bar.append("title")
         .text(title);

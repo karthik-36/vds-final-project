@@ -1,0 +1,108 @@
+<div class="modal-content">
+  <div class="modal-header">
+    <h1 class="modal-title fs-5" id="exampleModalLabel">Generate Data</h1>
+    <button type="button" class="btn-close" aria-label="Close" @click="closeModal"></button>
+  </div>
+  <div class="modal-body">
+    <div v-if="activeSection === 1">
+      <h2>Generate Data</h2>
+      <div class="accordion" id="accordionExample">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+              aria-expanded="true" aria-controls="collapseOne">
+              Upload File
+            </button>
+          </h2>
+          <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+            data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+              <div class="input-group">
+                <input type="file" class="form-control" id="file-input" accept="application/json"/>
+              </div>
+              <div class="input-group pt-3">
+                <button type="button" class="btn btn-primary" @click="processFile">Next</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingTwo">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+              data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              Generate data
+            </button>
+          </h2>
+          <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+            data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+              <div class="input-group mb-3">
+                <label for="basic-url" class="form-label">μ</label>
+                <div class="input-group mb-3">
+                  <input type="number" value="0" class="form-control" id="" aria-describedby="basic-addon3"
+                    v-model="mu">
+                </div>
+                <label for="basic-url" class="form-label">σ<sup>2</sup></label>
+                <div class="input-group mb-3">
+                  <input type="number" class="form-control" id="" aria-describedby="basic-addon3"
+                    v-model="sigma">
+                </div>
+                <label for="basic-url" class="form-label">No. of stages</label>
+                <div class="input-group mb-3">
+                  <input type="number" class="form-control" id="" aria-describedby="basic-addon3"
+                    v-model="stages">
+                </div>
+                <label for="basic-url" class="form-label">No. of PUFs</label>
+                <div class="input-group mb-3">
+                  <input type="number" class="form-control" id="" aria-describedby="basic-addon3"
+                    v-model="pufs" min="1" max="64"/>
+                </div>
+                <div class="input-group">
+                  <button type="button" class="btn btn-primary" @click="next">Next</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-if="activeSection === 2">
+      <h2>Regenerate δ</h2>
+    </div>
+    <div v-if="activeSection === 3">
+      <h2>Edit δ</h2>
+      <div class="row">
+        <div class="col-2">
+          PUF Number:
+        </div>
+        <div class="col-3">
+          <select class="form-select" id="" @change="onPufChange" v-model="selectedPufIndex">
+            <option v-for="p in parseInt(pufs, 10)" :value="p-1">{{ p }}</option>
+          </select>
+        </div>
+        <div class="col-4">
+          <input type="number" class="form-control" id="" aria-describedby="basic-addon3" v-model="selectedDelta.value"
+            :disabled="selectedDelta.index === -1" />
+        </div>
+        <div class="col-3">
+          <button type="button" class="btn btn-primary" @click="saveDeltaValue"
+            :disabled="selectedDelta.index === -1">Save</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col" id="upper-chart-container">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col" id="lower-chart-container">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <button type="button" class="btn btn-primary" @click="renderMainMatrix">Render Matrix</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

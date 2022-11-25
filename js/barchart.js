@@ -37,7 +37,7 @@ function BarChart(data, {
     // Construct scales, axes, and formats.
     const xScale = d3.scaleBand(xDomain, xRange).padding(xPadding);
     const yScale = yType(yDomain, yRange);
-    const xAxis = d3.axisBottom(xScale).tickSizeOuter(0);
+    const xAxis = d3.axisBottom(xScale).tickValues(getTickValues(X)).tickSizeOuter(0);
     const yAxis = d3.axisLeft(yScale).ticks(height / 40, yFormat);
   
     // Compute titles.
@@ -98,4 +98,12 @@ function BarChart(data, {
         .call(xAxis);
   
     return svg.node();
+
+    function getTickValues(X) {
+      if (X.length < 25) {
+        return X;
+      } else {
+        return X.filter(value => isOdd(value));
+      }
+    }
   }

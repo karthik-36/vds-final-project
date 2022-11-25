@@ -26,6 +26,8 @@ function BarChart(data, {
     const X = d3.map(data, x);
     const Y = d3.map(data, y);
   
+    xPadding = (X.length < 10) ? 0.9 : 0.7;
+  
     // Compute default domains, and unique the x-domain.
     if (xDomain === undefined) xDomain = X;
     if (yDomain === undefined) yDomain = [d3.min(Y), d3.max(Y)];
@@ -100,7 +102,7 @@ function BarChart(data, {
     return svg.node();
 
     function getTickValues(X) {
-      if (X.length < 25) {
+      if (X.length < 25 || width > 750) {
         return X;
       } else {
         return X.filter(value => isOdd(value));

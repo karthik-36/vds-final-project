@@ -18,7 +18,7 @@ function toBinaryVector(value) {
     digits.unshift(digit);
     value = value >>> 1;
   }
-  const L = Math.log2(N - 1);
+  const L = Math.log2(ROWS);
   while (digits.length < L) {
     digits.unshift(0);
   }
@@ -36,6 +36,14 @@ function clearContainer(container) {
 }
 
 function generateRandomDeltas({ stages, mean, variance, pufCount }) {
+
+  if (typeof mean !== "number") {
+    throw new Error("mean should be a number");
+  }
+
+  if (typeof variance !== "number") {
+    throw new Error("variance should be a number");
+  }
   const distribution = gaussian(mean, variance);
   const randoms = distribution.random(2 * stages * pufCount);
   const pufDeltas = [];
@@ -84,6 +92,6 @@ const Utils = {
     $('#alert-toast').toast('show')
   },
   round(value, places) {
-    return Math.round((value + Number.EPSILON) * (10 ** places)) / (10 ** places);
+    return Math.floor((value) * (10 ** places)) / (10 ** places);
   }
 }

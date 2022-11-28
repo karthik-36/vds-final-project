@@ -1,8 +1,10 @@
 let N = 16 + 0;
+let ROWS = 16;
+let COLS = 16;
 let STAGES = 4;
 let data = [];
 let side = 20;
-let width = side * N + 15, height = side * N;
+let width = side * COLS, height = side * ROWS;
 let E = side * 0.05;
 const colors = ["pink", "aqua", "lightgreen"];
 let svg, heatmapSvg, histogramSvg;
@@ -16,11 +18,13 @@ const textStyle = `
 `;
 
 const brush = d3.brush().on("end", brushed);
+brush.handleSize(3);
 
 var tip = d3.tip().attr('class', 'd3-tip').html((event, d) => {
   let pufIndex = d.pufIndex;
   let challengeIndex = d.challengeIndex;
   return app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2);
+  // return `PI: ${pufIndex} CI: ${challengeIndex} R: ${d.row} C: ${d.col}`;
 });
 
 
@@ -37,7 +41,7 @@ let c2 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "orange"]);
 let c3 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "yellow"]);
 let c4 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "blue"]);*/
 
-let c1 = d3.scaleSequential().interpolator(d3.interpolateBlues).domain([-15, 15]);
+let c1 = d3.scaleSequential().interpolator(d3.interpolateBlues).domain([-15, 15]);3
 let c2 = d3.scaleSequential().interpolator(d3.interpolateGreens).domain([-15, 15]);
 let c3 =  d3.scaleSequential().interpolator(d3.interpolateReds).domain([-15, 15]);
 let c4 = d3.scaleSequential().interpolator(d3.interpolatePurples).domain([-15, 15]);
@@ -50,7 +54,7 @@ let c4 = d3.scaleSequential().interpolator(d3.interpolatePurples).domain([-15, 1
 
 const binaryColorScale = (value,row) => row === null?  belowThreshold(value) ? c(0) : c(1) : (
 
-  (row < app.group[0]) ? (belowThreshold(value) ? c1(-6) : c1(1)) : (row < app.group[0] + app.group[1]) ? (belowThreshold(value) ? c2(-6) : c2(1)) :  (row < app.group[0] + app.group[1] + app.group[2]) ? (belowThreshold(value) ? c3(-6) : c3(1)) : (belowThreshold(value) ? c4(-6) : c4(1))
+  (row < app.group[0]) ? (belowThreshold(value) ? c1(-10) : c1(10)) : (row < app.group[0] + app.group[1]) ? (belowThreshold(value) ? c2(-10) : c2(10)) :  (row < app.group[0] + app.group[1] + app.group[2]) ? (belowThreshold(value) ? c3(-10) : c3(10)) : (belowThreshold(value) ? c4(-10) : c4(10))
   
 );
 
@@ -58,8 +62,6 @@ const fullColorScale = (value,row) => row === null? cRange(value) : (
   row < app.group[0] ? c1(value) : (row < app.group[0] + app.group[1]) ?  c2(value)  :  (row < app.group[0] + app.group[1] + app.group[2]) ? c3(value)  : c4(value) 
 
 );
-
-
 
 
 
@@ -79,12 +81,13 @@ const app = {
 
 main(); 
 
-function computeNewStateData(stages, n) {
+function computeNewStateData(stages, rows, cols) {
   STAGES = stages;
-  N = n;
-  side = (16*20) / N;
-  width = side * N + 15;
-  height = side * N;
+  ROWS = rows;
+  COLS = cols;
+  side = (16*20) / Math.max(ROWS, COLS);
+  width = side * COLS;
+  height = side * ROWS;
   E = side * 0.05;
   data = [];
   populateData();
@@ -126,8 +129,8 @@ function syncInputsWithState() {
 }
 
 function populateData() {
-  for (let rowIndex = 0; rowIndex < N; rowIndex++) {
-    for (let colIndex = 0; colIndex < N; colIndex++) {
+  for (let rowIndex = 0; rowIndex < ROWS; rowIndex++) {
+    for (let colIndex = 0; colIndex < COLS; colIndex++) {
       data.push({
         x: colIndex * side,
         y: rowIndex * side,
@@ -171,7 +174,7 @@ function main() {
 
 function initPufs() {
   const pufs = [];
-  const D = N - 0;
+  const D = COLS;
   for (let i=0; i<D; i++) {
     pufs.push(new PUF(STAGES));
   }
@@ -180,7 +183,7 @@ function initPufs() {
 
 function initChallenges() {
   const challenges = [];
-  const D = N - 0;
+  const D = ROWS;
   for (let i=0; i<D; i++) {
     let challenge = new Challenge(toBinaryVector(i));
     challenges.push(challenge);
@@ -283,24 +286,6 @@ function renderMatrix(data) {
     .attr("width", side)
     .attr("height", side)
 
-  // svg.selectAll(".label")
-  //   .data(data.filter(d => d.isDragHandle), d => d.id)
-  //   .join("text")
-  //   .text(d => {
-  //     if (d.row === 0 && d.col === 0) {
-  //       return "";
-  //     }
-  //     if (d.row === 0) {
-  //       return `P` + app.pufs[d.pufIndex].getId();
-  //     }
-  //     if (d.col === 0) {
-  //       return app.challenges[d.challengeIndex].getString()
-  //     }
-  //   })
-  //   .attr("y", d => d.y + 0 * side + 15)
-  //   .attr("x", d => d.x + 0 * side + 0)
-  //   .attr("class", d => getSquareClass(d) + " label")
-  //   .attr("style", textStyle)
 
   if (app.brushEnabled) {
     context.call(brush);
@@ -364,10 +349,14 @@ function initializeEventListeners() {
   brushButton.addEventListener("click", function() {
     app.brushEnabled = true;
     // app.colorScale = binaryColorScale;
+    brushButton.classList.add("active-button");
+    viewButton.classList.remove("active-button");
     renderMatrix(data);
   });
   viewButton.addEventListener("click", function() {
     app.brushEnabled = false;
+    viewButton.classList.add("active-button");
+    brushButton.classList.remove("active-button");
     // app.colorScale = binaryColorScale;
     renderMatrix(data);
   });
@@ -414,6 +403,12 @@ function initializeEventListeners() {
   pufNumberSelect.addEventListener("change", () => {
     renderBarCharts(pufNumberSelect.value);
     renderHistogram(pufNumberSelect.value);
+  });
+
+  // to reset the active state when the clicks outside the modal
+  const uploadDataModal = document.getElementById('upload-data-modal');
+  uploadDataModal.addEventListener('hidden.bs.modal', event => {
+    editDataApp.activeSection = 1;
   });
 
   for (let i=2; i<=STAGES; i++) {
@@ -477,10 +472,28 @@ function renderHistogram(pufNum) {
   let puf = app.pufs.find(puf => puf.getId() === pufId);
   //
   let histogram_data = [];
-  
-  for(let i = 0; i < app.challenges.length; i++ ){
-    histogram_data.push(puf.getResponseValue(app.challenges[i]));
+
+  console.log("STAGES " + STAGES);
+
+  // generating 10,000 random challenges
+  for (let i = 0; i < 10000; i++) { 
+    let digits = [];
+    let b = generateRandomBinary(STAGES);  //  generating random binary string of length 'STAGES'
+    /*for (let j = 0; j < b.length; j++) {
+      digits.push(Number(b[j]));
+    }
+    let challenge = new Challenge(digits);*/
+
+    let binaryVector = b.split("").map(ch => parseInt(ch, 10));
+    let challenge = new Challenge(binaryVector);
+    //
+    //console.log("challenge " + challenge);
+    //console.log("delta " + puf.getResponseValue(challenge));
+    histogram_data.push(puf.getResponseValue(challenge));
   }
+
+  console.log("histogram_data " + histogram_data);
+
   let container1 = document.getElementById("histogram-chart");
   
   // render histogram 

@@ -38,11 +38,6 @@ let c3 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "yellow"]);
 let c4 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "blue"]);
 
 
-// let c1 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "green"]);
-// let c2 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "orange"]);
-// let c3 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "yellow"]);
-// let c4 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "blue"]);
-
 const binaryColorScale = (value,row) => row === null?  belowThreshold(value) ? c(0) : c(1) : (
 
   (row < app.group[0]) ? (belowThreshold(value) ? c1(0) : c1(1)) : (row < app.group[0] + app.group[1]) ? (belowThreshold(value) ? c2(0) : c2(1)) :  (row < app.group[0] + app.group[1] + app.group[2]) ? (belowThreshold(value) ? c3(0) : c3(1)) : (belowThreshold(value) ? c4(0) : c4(1))

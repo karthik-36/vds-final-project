@@ -1,8 +1,10 @@
 let N = 16 + 0;
+let ROWS = 16;
+let COLS = 16;
 let STAGES = 4;
 let data = [];
 let side = 20;
-let width = side * N + 15, height = side * N;
+let width = side * COLS, height = side * ROWS;
 let E = side * 0.05;
 const colors = ["pink", "aqua", "lightgreen"];
 let svg, heatmapSvg, histogramSvg;
@@ -16,11 +18,13 @@ const textStyle = `
 `;
 
 const brush = d3.brush().on("end", brushed);
+brush.handleSize(3);
 
 var tip = d3.tip().attr('class', 'd3-tip').html((event, d) => {
   let pufIndex = d.pufIndex;
   let challengeIndex = d.challengeIndex;
   return app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2);
+  // return `PI: ${pufIndex} CI: ${challengeIndex} R: ${d.row} C: ${d.col}`;
 });
 
 
@@ -73,12 +77,13 @@ const app = {
 
 main(); 
 
-function computeNewStateData(stages, n) {
+function computeNewStateData(stages, rows, cols) {
   STAGES = stages;
-  N = n;
-  side = (16*20) / N;
-  width = side * N + 15;
-  height = side * N;
+  ROWS = rows;
+  COLS = cols;
+  side = (16*20) / Math.max(ROWS, COLS);
+  width = side * COLS;
+  height = side * ROWS;
   E = side * 0.05;
   data = [];
   populateData();
@@ -120,8 +125,8 @@ function syncInputsWithState() {
 }
 
 function populateData() {
-  for (let rowIndex = 0; rowIndex < N; rowIndex++) {
-    for (let colIndex = 0; colIndex < N; colIndex++) {
+  for (let rowIndex = 0; rowIndex < ROWS; rowIndex++) {
+    for (let colIndex = 0; colIndex < COLS; colIndex++) {
       data.push({
         x: colIndex * side,
         y: rowIndex * side,
@@ -165,7 +170,7 @@ function main() {
 
 function initPufs() {
   const pufs = [];
-  const D = N - 0;
+  const D = COLS;
   for (let i=0; i<D; i++) {
     pufs.push(new PUF(STAGES));
   }
@@ -174,7 +179,7 @@ function initPufs() {
 
 function initChallenges() {
   const challenges = [];
-  const D = N - 0;
+  const D = ROWS;
   for (let i=0; i<D; i++) {
     let challenge = new Challenge(toBinaryVector(i));
     challenges.push(challenge);
@@ -277,24 +282,6 @@ function renderMatrix(data) {
     .attr("width", side)
     .attr("height", side)
 
-  // svg.selectAll(".label")
-  //   .data(data.filter(d => d.isDragHandle), d => d.id)
-  //   .join("text")
-  //   .text(d => {
-  //     if (d.row === 0 && d.col === 0) {
-  //       return "";
-  //     }
-  //     if (d.row === 0) {
-  //       return `P` + app.pufs[d.pufIndex].getId();
-  //     }
-  //     if (d.col === 0) {
-  //       return app.challenges[d.challengeIndex].getString()
-  //     }
-  //   })
-  //   .attr("y", d => d.y + 0 * side + 15)
-  //   .attr("x", d => d.x + 0 * side + 0)
-  //   .attr("class", d => getSquareClass(d) + " label")
-  //   .attr("style", textStyle)
 
   if (app.brushEnabled) {
     context.call(brush);

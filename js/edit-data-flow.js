@@ -14,6 +14,7 @@ function createModalVueApp(template) {
         stages: 4,
         pufs: 64,
         challenges: [],
+        nChallenges: 64,
         activeSection: 1,
         deltas: [],
         selectedPufIndex: 0,
@@ -57,12 +58,12 @@ function createModalVueApp(template) {
         }
         app.pufs = pufs; // set the global app state to use the new PUFs
         if (this.challenges.length === 0) {
-          app.challenges = generateRandomChallenges(this.stages, this.pufs); // set the global app state to use the new challenges
+          app.challenges = generateRandomChallenges(this.stages, this.nChallenges); // set the global app state to use the new challenges
           Utils.toast("Challenges generated randomly");
         } else {
           app.challenges = this.challenges;
         }
-        computeNewStateData(this.stages, pufs.length + 0);
+        computeNewStateData(this.stages, app.challenges.length ,pufs.length);
         syncInputsWithState();
         renderMatrix(data); // re-render the matrix using the new PUFs
 
@@ -178,7 +179,7 @@ function createModalVueApp(template) {
           Vue.nextTick(() => this.renderDeltaChart());
           console.log(json);
         } catch (e) {
-          console.log("Something went wrong")
+          Utils.toast("Something went wrong");
         }
       }
     }

@@ -50,7 +50,7 @@ let c4 = d3.scaleSequential().interpolator(d3.interpolatePurples).domain([-15, 1
 
 const binaryColorScale = (value,row) => row === null?  belowThreshold(value) ? c(0) : c(1) : (
 
-  (row < app.group[0]) ? (belowThreshold(value) ? c(0) : c(1)) : (row < app.group[0] + app.group[1]) ? (belowThreshold(value) ? c(0) : c(1)) :  (row < app.group[0] + app.group[1] + app.group[2]) ? (belowThreshold(value) ? c(0) : c(1)) : (belowThreshold(value) ? c(0) : c(1))
+  (row < app.group[0]) ? (belowThreshold(value) ? c1(-6) : c1(1)) : (row < app.group[0] + app.group[1]) ? (belowThreshold(value) ? c2(-6) : c2(1)) :  (row < app.group[0] + app.group[1] + app.group[2]) ? (belowThreshold(value) ? c3(-6) : c3(1)) : (belowThreshold(value) ? c4(-6) : c4(1))
   
 );
 
@@ -274,9 +274,9 @@ function renderMatrix(data) {
       let challengeIndex = d.challengeIndex;
 
       if(app.splitState){
-        return app.colorScale(app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2), d.row);
+        return app.colorScale(app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]), d.row);
       }else{
-        return app.colorScale(app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2),null);
+        return app.colorScale(app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]), null);
       }
       
     })
@@ -500,5 +500,8 @@ function renderHistogram(pufNum) {
 }
 
 function belowThreshold(value) {
+  if (typeof value !== "number") {
+    throw new Error("Must be a number!");
+  }
   return value < 0; 
 }

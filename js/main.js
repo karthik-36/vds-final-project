@@ -24,30 +24,36 @@ var tip = d3.tip().attr('class', 'd3-tip').html((event, d) => {
 });
 
 
-let cRange = d3.scaleSequential().domain([0, 1]).range(["lightblue", "pink"]);
+//let cRange = d3.scaleSequential().domain([0, 1]).range(["lightblue", "pink"]);
+
+let cRange = d3.scaleSequential().interpolator(d3.interpolateCool).domain([15, -15]);
 let c = d3.scaleOrdinal().domain([0, 1]).range(["lightblue", "darkblue"]);
 
+//const realColorScale = d3.scaleSequential(d3.interpolatePRGn).domain([-1, 1]);
+//const realColorScaleRed = d3.scaleSequential(d3.interpolateBlues).domain([-1, 1]);
 
-const realColorScale = d3.scaleSequential(d3.interpolatePRGn).domain([-1, 1]);
-const realColorScaleRed = d3.scaleSequential(d3.interpolateBlues).domain([-1, 1]);
-
-
-let c1 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "green"]);
+/*let c1 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "green"]);
 let c2 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "orange"]);
 let c3 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "yellow"]);
-let c4 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "blue"]);
+let c4 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "blue"]);*/
 
+let c1 = d3.scaleSequential().interpolator(d3.interpolateBlues).domain([-15, 15]);
+let c2 = d3.scaleSequential().interpolator(d3.interpolateGreens).domain([-15, 15]);
+let c3 =  d3.scaleSequential().interpolator(d3.interpolateReds).domain([-15, 15]);
+let c4 = d3.scaleSequential().interpolator(d3.interpolatePurples).domain([-15, 15]);
 
-// let c1 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "green"]);
-// let c2 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "orange"]);
-// let c3 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "yellow"]);
-// let c4 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "blue"]);
-
-const binaryColorScale = (value,row) => row === null?  belowThreshold(value) ? c(0) : c(1) : (
+/*const binaryColorScale = (value,row) => row === null?  belowThreshold(value) ? c(0) : c(1) : (
 
   (row < app.group[0]) ? (belowThreshold(value) ? c1(0) : c1(1)) : (row < app.group[0] + app.group[1]) ? (belowThreshold(value) ? c2(0) : c2(1)) :  (row < app.group[0] + app.group[1] + app.group[2]) ? (belowThreshold(value) ? c3(0) : c3(1)) : (belowThreshold(value) ? c4(0) : c4(1))
   
- );
+ );*/
+
+const binaryColorScale = (value,row) => row === null?  belowThreshold(value) ? c(0) : c(1) : (
+
+  (row < app.group[0]) ? (belowThreshold(value) ? c(0) : c(1)) : (row < app.group[0] + app.group[1]) ? (belowThreshold(value) ? c(0) : c(1)) :  (row < app.group[0] + app.group[1] + app.group[2]) ? (belowThreshold(value) ? c(0) : c(1)) : (belowThreshold(value) ? c(0) : c(1))
+  
+);
+
 const fullColorScale = (value,row) => row === null? cRange(value) : (
   row < app.group[0] ? c1(value) : (row < app.group[0] + app.group[1]) ?  c2(value)  :  (row < app.group[0] + app.group[1] + app.group[2]) ? c3(value)  : c4(value) 
 

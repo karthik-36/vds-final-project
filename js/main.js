@@ -358,10 +358,14 @@ function initializeEventListeners() {
   brushButton.addEventListener("click", function() {
     app.brushEnabled = true;
     // app.colorScale = binaryColorScale;
+    brushButton.classList.add("active-button");
+    viewButton.classList.remove("active-button");
     renderMatrix(data);
   });
   viewButton.addEventListener("click", function() {
     app.brushEnabled = false;
+    viewButton.classList.add("active-button");
+    brushButton.classList.remove("active-button");
     // app.colorScale = binaryColorScale;
     renderMatrix(data);
   });

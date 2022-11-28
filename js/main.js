@@ -277,9 +277,9 @@ function renderMatrix(data) {
       let challengeIndex = d.challengeIndex;
 
       if(app.splitState){
-        return app.colorScale(app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2), d.row);
+        return app.colorScale(app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]), d.row);
       }else{
-        return app.colorScale(app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2),null);
+        return app.colorScale(app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]), null);
       }
       
     })
@@ -513,5 +513,8 @@ function renderHistogram(pufNum) {
 }
 
 function belowThreshold(value) {
+  if (typeof value !== "number") {
+    throw new Error("Must be a number!");
+  }
   return value < 0; 
 }

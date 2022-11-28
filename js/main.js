@@ -272,15 +272,6 @@ function renderMatrix(data) {
       let pufIndex = d.pufIndex;
       let challengeIndex = d.challengeIndex;
 
-      // if (pufIndex % 10 === 0) {
-      //   return "green";
-      // }
-
-      // if (challengeIndex % 10 === 0) {
-      //   return "black";
-      // } 
-      // return "pink";
-
       if(app.splitState){
         return app.colorScale(app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2), d.row);
       }else{
@@ -291,24 +282,6 @@ function renderMatrix(data) {
     .attr("width", side)
     .attr("height", side)
 
-  // svg.selectAll(".label")
-  //   .data(data.filter(d => d.isDragHandle), d => d.id)
-  //   .join("text")
-  //   .text(d => {
-  //     if (d.row === 0 && d.col === 0) {
-  //       return "";
-  //     }
-  //     if (d.row === 0) {
-  //       return `P` + app.pufs[d.pufIndex].getId();
-  //     }
-  //     if (d.col === 0) {
-  //       return app.challenges[d.challengeIndex].getString()
-  //     }
-  //   })
-  //   .attr("y", d => d.y + 0 * side + 15)
-  //   .attr("x", d => d.x + 0 * side + 0)
-  //   .attr("class", d => getSquareClass(d) + " label")
-  //   .attr("style", textStyle)
 
   if (app.brushEnabled) {
     context.call(brush);

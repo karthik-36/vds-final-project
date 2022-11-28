@@ -54,7 +54,7 @@ const fullColorScale = (value,row) => row === null? cRange(value) : (
 
 // global object to store the app state
 const app = {
-  colorScale: fullColorScale,
+  colorScale: binaryColorScale,
   splitState: false,
   brushEnabled: false,
   group :[],
@@ -111,7 +111,7 @@ function syncInputsWithState() {
     pufNumberSelect.appendChild(option);
   }
 
-  stagesDisplay.textContent = `Number of stages: ${STAGES}`;
+  stagesDisplay.textContent = `${STAGES}`;
 }
 
 function populateData() {
@@ -259,8 +259,6 @@ function renderMatrix(data) {
     .attr("class", d => getSquareClass(d) + " node")
     .attr("fill", d => {
       
-      console.log(group);
-      console.log(d);
       let pufIndex = d.pufIndex;
       let challengeIndex = d.challengeIndex;
 
@@ -322,7 +320,7 @@ function brushed({ selection }) {
     y1 = Utils.round(y1, 3);
     console.log(x0, y0, x1, y1);
     let selectedData = data.filter(d => x0 <= d.x && d.x < x1 && y0 <= d.y && d.y < y1);
-    let sum = 0;
+    let sum = 0, total = 0;
     console.log(selectedData);
     for (let d of selectedData) {
       let puf = app.pufs[d.pufIndex];
@@ -332,8 +330,9 @@ function brushed({ selection }) {
       total++;
     }
     //console.log(`Sum: ${sum}`);
-    document.getElementById("brush-value").value = sum;
-    document.getElementById("ratio-value").value = sum/total.toFixed(2);
+    document.getElementById("brush-value").textContent = sum;
+    document.getElementById("total-value").textContent = total;
+    document.getElementById("ratio-value").textContent = (sum/total.toFixed(2)).toFixed(2);
   }
 }
 
@@ -347,53 +346,34 @@ function initializeEventListeners() {
   document.getElementById("clear-button").addEventListener("click", () => {
     clearSelection(data);
   });
-  const modeSelect = document.getElementById("mode-select");
-  modeSelect.addEventListener("change", function (e) {
-    switch (modeSelect.value) {
-      case "brush": {
-        app.brushEnabled = true;
-       // app.colorScale = binaryColorScale;
-        renderMatrix(data);
-      } break;
-      case "view": {
-        app.brushEnabled = false;
-       // app.colorScale = binaryColorScale;
-        renderMatrix(data);
-      }
-      default: { }
-    }
+
+  const brushButton = document.getElementById("brush-button");
+  const viewButton = document.getElementById("view-button");
+
+  brushButton.addEventListener("click", function() {
+    app.brushEnabled = true;
+    // app.colorScale = binaryColorScale;
+    renderMatrix(data);
+  });
+  viewButton.addEventListener("click", function() {
+    app.brushEnabled = false;
+    // app.colorScale = binaryColorScale;
+    renderMatrix(data);
   });
 
 
-  const colorSelect = document.getElementById("color-select");
-  colorSelect.addEventListener("change", function (e) {
-    switch (colorSelect.value) {
-      case "colorRange": {
-        app.colorScale = fullColorScale;
-        renderMatrix(data);
-      } break;
-      case "binaryColor": {
-        app.colorScale = binaryColorScale;
-        renderMatrix(data);
-      }
-      default: { }
-    }
+  const groupButton = document.getElementById("group-button");
+  groupButton.addEventListener("click", () => {
+    app.splitState = !app.splitState;
+    groupButton.classList.toggle("active-button");
+    renderMatrix(data);
   });
 
-  const splitSelect = document.getElementById("split-select");
-  splitSelect.addEventListener("change", function (e) {
-    console.log(splitSelect.value);
-    switch (splitSelect.value) {
-      case "normal": {
-        app.splitState = false;
-        renderMatrix(data);
-      } break;
-      case "split": {
-        app.splitState = true;
-        renderMatrix(data);
-      }
-      default: { }
-    }
+  const colorModeButton = document.getElementById("color-mode-button");
+  colorModeButton.addEventListener("click", () => {
+    app.colorScale = (app.colorScale === fullColorScale) ? binaryColorScale : fullColorScale;
+    colorModeButton.classList.toggle("active-button");
+    renderMatrix(data);
   });
 
   const stageInput = document.getElementById("stage-number");
@@ -432,12 +412,15 @@ function initializeEventListeners() {
     stageInput.appendChild(option);
   }
 
-  document.getElementById("stages-display").textContent = `Number of stages: ${STAGES}`;
+  document.getElementById("stages-display").textContent = `${STAGES}`;
 }
 
 function clearSelection(data) {
   if (app.brushEnabled) {
     brush.clear(context);
+    document.getElementById("brush-value").textContent = 0;
+    document.getElementById("total-value").textContent = 0;
+    document.getElementById("ratio-value").textContent = 0;
   }
 }
 

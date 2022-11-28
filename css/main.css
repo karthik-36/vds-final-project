@@ -8,6 +8,7 @@
     display: flex;
   }
   .sidebar{
+    display: none;
     background: #e8e8e8;
     flex: 1;    
     padding-left: 0px;
@@ -35,6 +36,9 @@
     padding-top: 5px;
     
   }
+  .buttons {
+    padding-top: 5px;
+  }
   
   .btn-btn-primary{
     background-color: #008CBA;
@@ -53,6 +57,7 @@
     flex: 1;
     padding-left: 5px;
     padding-right: 5px;
+    padding-top: 5px;
   }
   
   .home-section .right{
@@ -64,11 +69,9 @@
   }
   
   .home-section .right .chart1{
-    height: 65%;
   }
   
   .home-section .right .chart2{
-    height: 35%;
     padding-top: 30px;
   }
 
@@ -80,8 +83,6 @@
     color: green;
   }
 .right {
-    padding-top: 40px;
-    padding-bottom: 40px;
 }
 
 .row.input-wrapper {
@@ -109,9 +110,76 @@ table{
 }
 
 #puf-select {
-    width: 50%;
+    width: 90%;
 }
 
 .card1 {
     padding-bottom: 35px;
+}
+
+.cols.bi-list::before {
+    transform: rotate(90deg);
+}
+.bi-layout-three-columns::before,  .bi-dash-lg::before{
+    transform: rotate(90deg);
+}
+
+.right .dropdown-toggle:after { content: none }
+
+.right .dropdown-menu.show {
+    padding: 10px;
+}
+.table {
+    margin-bottom: 0px;
+}
+.table>:not(caption)>*>* {
+    padding: 3px;
+}
+.controls {
+    padding: 5px;
+}
+.controls .inner {
+    padding: 5px;
+    background-color: white;
+    border-radius: 10px;
+}
+
+.controls .btn.btn-primary {
+    background-color: cornflowerblue;
+    border-color: cornflowerblue;
+}
+
+.controls .btn.btn-primary:hover {
+    background-color: blue;
+}
+
+.number-display {
+    width: 50%;
+    border-radius: 10px;
+    display: flex;
+}
+
+.number-display .item {
+    flex: 1;
+    padding: 5px;
+}
+.number-display .header {
+    font-size: 12px;
+}
+.number-display .value {
+    font-size: 20px;
+}
+
+.item:nth-child(even) {
+    background-color: pink;
+}
+
+.item:nth-child(odd) {
+    background-color: lightblue;
+}
+
+
+.controls .btn.btn-primary.active-button {
+    background-color: crimson;
+    border-color: crimson;
 }

@@ -4,6 +4,7 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css"/>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -34,147 +35,8 @@
         Hello, world! This is a toast message.
       </div>
     </div>
-    <div class="sidebar">
-      <div class="row">
-        <div class="col">
-          <div class="card1" style="padding-bottom: 5px;">
-            <span class="links_name">APUFs Panel</span>
-          </div>
-          <div class="card1">
-            <button
-              type="button"
-              class="btn-btn-primary"
-              data-bs-toggle="modal"
-              data-bs-target="#upload-data-modal"
-            >
-              Generate Data
-            </button>
-          </div>
-          <div class="card1">
-            <div>
-              <span class="links_name">Select Stage &nbsp;</span>
-              <input
-                type="number"
-                class="form-control form-control-sm"
-                id="num-stages"
-                placeholder=""
-                value="1"
-                min="1"
-                max="4"
-              />
-            </div>
-            <div>
-              <span class="links_name">Bit Position &nbsp; &nbsp;</span>
-              <input
-                type="number"
-                class="form-control form-control-sm"
-                id="challenge-bit-position"
-                placeholder=""
-                value="1"
-                min="1"
-                max="3"
-              />
-              <div class="buttons">
-                <button type="button" class="btn-btn-primary" id="reorder-rows">
-                  Reorder Rows
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="card1">
-            <span class="links_name">Stage</span>
-            <select
-              class="form-select form-control form-control-sm"
-              aria-label=""
-              id="stage-number"
-            >
-              <option value="1" selected>1</option>
-            </select>
-            <span class="links_name">&nbsp;&nbsp;&delta;</span>
-            <select
-              class="form-select form-control form-control-sm"
-              aria-label=""
-              id="delta-number"
-            >
-              <option value="0" selected>0</option>
-              <option value="1">1</option>
-            </select>
-            <div class="buttons">
-              <button type="button" class="btn-btn-primary" id="reorder-cols">
-                Reorder Col (asc. &delta;)
-              </button>
-            </div>
-          </div>
-
-          <div class="card1">
-            <span class="links_name">Mode &nbsp; &nbsp; &nbsp;</span>
-            <select
-              class="form-select form-control form-control-sm"
-              aria-label="Default select example"
-              id="mode-select"
-            >
-              <option value="view" selected>View</option>
-              <option value="brush">Brush</option>
-            </select>
-            <div class="buttons">
-              <button type="button" class="btn-btn-primary" id="clear-button">
-                Clear
-              </button>
-            </div>
-          </div>
-
-    
-
-          <div class="card1">
-            <span class="links_name">Color Mode &nbsp; &nbsp; &nbsp;</span>
-           
-              <select
-                class="form-select form-control form-control-sm"
-                aria-label="Default select example"
-                id="color-select"
-              >
-                <option value="binaryColor" selected>Binary Colors</option>
-                <option value="colorRange" selected>Color Range</option>
-              </select>
-            
-            <div class="col"></div>
-          </div>
-
-          <div class="card1">
-            <span class="links_name">Color Split &nbsp; &nbsp; &nbsp;</span>
-           
-              <select
-                class="form-select form-control form-control-sm"
-                aria-label="Default select example"
-                id="split-select"
-              >
-                <option value="normal" selected>normal</option>
-                <option value="split" >4x split</option>
-              </select>
-            
-            <div class="col"></div>
-          </div>
-
-          <div class="card1">
-            <span class="links_name">Response Bias</span>
-            <input
-              type="text"
-              readonly
-              class="form-control form-control-sm"
-              placeholder=""
-              id="brush-value"
-            />
-          </div>
-          <div></div>
-        </div>
-      </div>
-    </div>
-
     <section class="home-section">
       <div class="column left">
-        <h4>Challenge-Response Matrix</h4>
-        <h5 id="stages-display"></h5>
         <div class="charts">
           <div class="chart" id="matrix"></div>
         </div>
@@ -182,42 +44,141 @@
 
       <div class="column right">
         <div class="row">
-          <div class="col" style="display: flex;">
-            <div
-              style="
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                padding-right: 5px;
-              "
-            >
-              PUF #:
+          <div class="col controls">
+            <div class="inner">
+            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+              <button title="New Data" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#upload-data-modal"><i class="bi bi-plus"></i></button>
+
+              <div class="btn-group" role="group">
+                <button type="button" title="Reorder Rows" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-list"></i>
+                </button>
+                <ul class="dropdown-menu">
+                  <div>
+                    <span class="links_name">Select Stage &nbsp;</span>
+                    <input
+                      type="number"
+                      class="form-control form-control-sm"
+                      id="num-stages"
+                      placeholder=""
+                      value="1"
+                      min="1"
+                      max="4"
+                    />
+                  </div>
+                  <div>
+                    <span class="links_name">Bit Position &nbsp; &nbsp;</span>
+                    <input
+                      type="number"
+                      class="form-control form-control-sm"
+                      id="challenge-bit-position"
+                      placeholder=""
+                      value="1"
+                      min="1"
+                      max="3"
+                    />
+                    <div class="buttons">
+                      <button type="button" class="btn-btn-primary" id="reorder-rows">
+                        Reorder Rows
+                      </button>
+                    </div>
+                  </div>
+                </ul>
+              </div>
+
+              <div class="btn-group" role="group">
+                <button type="button" title="Reorder Columns" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-list cols"></i>
+                </button>
+                <ul class="dropdown-menu">
+                  <span class="links_name">Stage</span>
+                  <select
+                    class="form-select form-control form-control-sm"
+                    aria-label=""
+                    id="stage-number"
+                  >
+                    <option value="1" selected>1</option>
+                  </select>
+                  <span class="links_name">&nbsp;&nbsp;&delta;</span>
+                  <select
+                    class="form-select form-control form-control-sm"
+                    aria-label=""
+                    id="delta-number"
+                  >
+                    <option value="0" selected>0</option>
+                    <option value="1">1</option>
+                  </select>
+                  <div class="buttons">
+                    <button type="button" class="btn-btn-primary" id="reorder-cols">
+                      Reorder Col (asc. &delta;)
+                    </button>
+                  </div>
+                </ul>
+              </div>
+              
             </div>
-            <div style="flex: 1;">
-              <select
-                class="form-select form-control form-control-sm"
-                aria-label="Default select example"
-                id="puf-select"
-              >
-                <option value="1" selected>1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-                <option value="13">13</option>
-                <option value="14">14</option>
-                <option value="15">15</option>
-                <option value="16">16</option>
-              </select>
+            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+              <button type="button" title="View Mode" class="btn btn-primary" id="view-button"><i class="bi bi-eye"></i></button>
+              <button type="button" title="Brush Mode" class="btn btn-primary" id="brush-button"><i class="bi bi-brush"></i></button>
+              <button type="button" title="Clear" class="btn btn-primary" id="clear-button"><i class="bi bi-x"></i></button>
+            </div>
+
+            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+              <button type="button" title="Color Mode" class="btn btn-primary" id="color-mode-button"><i class="bi bi-palette"></i></button>
+              <button type="button" title="Color by Group" class="btn btn-primary" id="group-button"><i class="bi bi-layout-three-columns"></i></button>
+            </div>
+
+            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+              <button type="button" class="btn btn-primary"><i class="bi bi-question"></i></button>
             </div>
           </div>
+          </div>
+          
+        </div>
+        <div class="row">
+          <div class="col" style="display: flex;">
+            <div class="number-display" style="flex: 1">
+              <div class="item">
+                <div class="header">Response Bias</div>
+                <div class="value" id="brush-value">0</div>
+              </div>
+              <div class="item">
+                <div class="header">Total</div>
+                <div class="value" id="total-value">0</div>
+              </div>
+              <div class="item">
+                <div class="header">Ratio</div>
+                <div class="value" id="ratio-value">0</div>
+              </div>
+              <div class="item">
+                <div class="header">Stages</div>
+                <div class="value" id="stages-display">456</div>
+              </div>
+            </div>
+          </div>
+          <div class="col">PUF #:
+            <select
+              class="form-select form-control form-control-sm"
+              aria-label="Default select example"
+              id="puf-select">
+              <option value="1" selected>1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+              <option value="13">13</option>
+              <option value="14">14</option>
+              <option value="15">15</option>
+              <option value="16">16</option>
+            </select>
+          </div>  
         </div>
         <div class="chart1">
           <div class="" id="PUF-num"></div>

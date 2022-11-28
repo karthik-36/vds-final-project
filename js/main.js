@@ -410,6 +410,12 @@ function initializeEventListeners() {
     renderHistogram(pufNumberSelect.value);
   });
 
+  // to reset the active state when the clicks outside the modal
+  const uploadDataModal = document.getElementById('upload-data-modal');
+  uploadDataModal.addEventListener('hidden.bs.modal', event => {
+    editDataApp.activeSection = 1;
+  });
+
   for (let i=2; i<=STAGES; i++) {
     let option= document.createElement("option");
     option.value = i;

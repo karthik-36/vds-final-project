@@ -36,6 +36,14 @@ function clearContainer(container) {
 }
 
 function generateRandomDeltas({ stages, mean, variance, pufCount }) {
+
+  if (typeof mean !== "number") {
+    throw new Error("mean should be a number");
+  }
+
+  if (typeof variance !== "number") {
+    throw new Error("variance should be a number");
+  }
   const distribution = gaussian(mean, variance);
   const randoms = distribution.random(2 * stages * pufCount);
   const pufDeltas = [];

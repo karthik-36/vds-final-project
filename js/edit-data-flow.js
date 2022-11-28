@@ -1,4 +1,7 @@
 let editDataApp;
+
+Vue.component('multiselect', window.VueMultiselect.default);
+
 fetch("templates/template.html")
   .then(response => response.text())
   .then(createModalVueApp)
@@ -12,7 +15,7 @@ function createModalVueApp(template) {
         mu: 0,
         sigma: 1,
         stages: 4,
-        pufs: 64,
+        pufs: 4,
         challenges: [],
         activeSection: 1,
         deltas: [],
@@ -21,16 +24,63 @@ function createModalVueApp(template) {
           value: 0,
           index: -1,
           level: 0,
+        },
+        regenerate: {
+          mu: 0,
+          sigma: 1,
+          selectedDeltas: []
         }
       }
     },
     computed: {
+      selectableDeltas() {
+        let res = [];
+        const { stages } = this;
+        let id=0;
+        for (let i=1; i<=stages; i++) {
+          res.push({
+            stage: i, bit: 0, id
+          });
+          id++;
+        }
+        for (let i=1; i<=stages; i++) {
+          res.push({
+            stage: i, bit: 1, id
+          });
+          id++;
+        }
+        return res;
+      },
       stageOptions() {
         let os = [];
         for (let i = 1; i <= this.stages; i++) { os.push(i); } return os;
       }
     },
     methods: {
+      onRegenerateClick() {
+        const mean = this.regenerate.mu;
+        const variance = this.regenerate.sigma;
+        const distribution = gaussian(mean, variance);
+        const randoms = distribution.random(this.regenerate.selectedDeltas.length * this.pufs);
+        let index = 0;
+        for (let puf=0; puf < this.pufs; puf++) {
+          for (let i=0; i<this.regenerate.selectedDeltas.length; i++) {
+            let value = randoms[index];
+            let o = this.regenerate.selectedDeltas[i];
+            this.deltas[puf][o.stage-1][o.bit] = value;
+            index++;
+          }
+        }
+        this.regenerate.selectedDeltas = [];
+        Utils.toast("Deltas regenerated.");
+      },
+      next2() {
+        this.activeSection = 3;
+        Vue.nextTick(() => this.renderDeltaChart());
+      },
+      getLabel({stage, bit}) {
+        return `Stage: ${stage}, δ(${bit})`;
+      },
       next() {
         let deltas = generateRandomDeltas({
           stages: this.stages,
@@ -39,8 +89,7 @@ function createModalVueApp(template) {
           pufCount: this.pufs
         });
         this.deltas = deltas;
-        this.activeSection = 3;
-        Vue.nextTick(() => this.renderDeltaChart());
+        this.activeSection = 2;
       },
       renderMainMatrix() {
         let pufs = [];
@@ -174,8 +223,8 @@ function createModalVueApp(template) {
             return deltas;
           });
           this.stages = stages;
-          this.activeSection = 3;
-          Vue.nextTick(() => this.renderDeltaChart());
+          this.activeSection = 2;
+          // Vue.nextTick(() => this.renderDeltaChart());
           console.log(json);
         } catch (e) {
           console.log("Something went wrong")

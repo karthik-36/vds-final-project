@@ -62,7 +62,7 @@ function createModalVueApp(template) {
         } else {
           app.challenges = this.challenges;
         }
-        computeNewStateData(this.stages, pufs.length + 0);
+        computeNewStateData(this.stages, app.challenges.length ,pufs.length);
         syncInputsWithState();
         renderMatrix(data); // re-render the matrix using the new PUFs
 
@@ -178,7 +178,7 @@ function createModalVueApp(template) {
           Vue.nextTick(() => this.renderDeltaChart());
           console.log(json);
         } catch (e) {
-          console.log("Something went wrong")
+          Utils.toast("Something went wrong");
         }
       }
     }

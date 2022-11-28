@@ -102,7 +102,7 @@ function BarChart(data, {
     return svg.node();
 
     function getTickValues(X) {
-      if (X.length < 25 || width > 750) {
+      if (X.length < 25 || width > 850) {
         return X;
       } else {
         return X.filter(value => isOdd(value));

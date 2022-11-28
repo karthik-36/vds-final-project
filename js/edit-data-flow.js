@@ -19,6 +19,7 @@ function createModalVueApp(template) {
         challenges: [],
         nChallenges: 64,
         activeSection: 1,
+        infoMessage: "",
         deltas: [],
         selectedPufIndex: 0,
         selectedDelta: {
@@ -58,6 +59,13 @@ function createModalVueApp(template) {
       }
     },
     methods: {
+      showInfo(message) {
+        this.infoMessage = message;
+        let me = this;
+        setTimeout(() => {
+          me.infoMessage = "";
+        }, 2000);
+      },
       onRegenerateClick() {
         const mean = this.regenerate.mu;
         const variance = this.regenerate.sigma;
@@ -74,6 +82,7 @@ function createModalVueApp(template) {
         }
         this.regenerate.selectedDeltas = [];
         Utils.toast("Deltas regenerated.");
+        this.showInfo("Deltas regenerated.");
       },
       next2() {
         this.activeSection = 3;

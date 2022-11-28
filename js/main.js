@@ -28,36 +28,40 @@ var tip = d3.tip().attr('class', 'd3-tip').html((event, d) => {
 });
 
 
-let cRange = d3.scaleSequential().domain([0, 1]).range(["lightblue", "pink"]);
+//let cRange = d3.scaleSequential().domain([0, 1]).range(["lightblue", "pink"]);
+
+let cRange = d3.scaleSequential().interpolator(d3.interpolateCool).domain([15, -15]);
 let c = d3.scaleOrdinal().domain([0, 1]).range(["lightblue", "darkblue"]);
 
+//const realColorScale = d3.scaleSequential(d3.interpolatePRGn).domain([-1, 1]);
+//const realColorScaleRed = d3.scaleSequential(d3.interpolateBlues).domain([-1, 1]);
 
-const realColorScale = d3.scaleSequential(d3.interpolatePRGn).domain([-1, 1]);
-const realColorScaleRed = d3.scaleSequential(d3.interpolateBlues).domain([-1, 1]);
-
-
-let c1 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "green"]);
+/*let c1 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "green"]);
 let c2 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "orange"]);
 let c3 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "yellow"]);
-let c4 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "blue"]);
+let c4 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "blue"]);*/
 
+let c1 = d3.scaleSequential().interpolator(d3.interpolateBlues).domain([-15, 15]);3
+let c2 = d3.scaleSequential().interpolator(d3.interpolateGreens).domain([-15, 15]);
+let c3 =  d3.scaleSequential().interpolator(d3.interpolateReds).domain([-15, 15]);
+let c4 = d3.scaleSequential().interpolator(d3.interpolatePurples).domain([-15, 15]);
 
-// let c1 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "green"]);
-// let c2 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "orange"]);
-// let c3 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "yellow"]);
-// let c4 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "blue"]);
-
-const binaryColorScale = (value,row) => row === null?  belowThreshold(value) ? c(0) : c(1) : (
+/*const binaryColorScale = (value,row) => row === null?  belowThreshold(value) ? c(0) : c(1) : (
 
   (row < app.group[0]) ? (belowThreshold(value) ? c1(0) : c1(1)) : (row < app.group[0] + app.group[1]) ? (belowThreshold(value) ? c2(0) : c2(1)) :  (row < app.group[0] + app.group[1] + app.group[2]) ? (belowThreshold(value) ? c3(0) : c3(1)) : (belowThreshold(value) ? c4(0) : c4(1))
   
- );
+ );*/
+
+const binaryColorScale = (value,row) => row === null?  belowThreshold(value) ? c(0) : c(1) : (
+
+  (row < app.group[0]) ? (belowThreshold(value) ? c1(-10) : c1(10)) : (row < app.group[0] + app.group[1]) ? (belowThreshold(value) ? c2(-10) : c2(10)) :  (row < app.group[0] + app.group[1] + app.group[2]) ? (belowThreshold(value) ? c3(-10) : c3(10)) : (belowThreshold(value) ? c4(-10) : c4(10))
+  
+);
+
 const fullColorScale = (value,row) => row === null? cRange(value) : (
   row < app.group[0] ? c1(value) : (row < app.group[0] + app.group[1]) ?  c2(value)  :  (row < app.group[0] + app.group[1] + app.group[2]) ? c3(value)  : c4(value) 
 
 );
-
-
 
 
 
@@ -468,10 +472,28 @@ function renderHistogram(pufNum) {
   let puf = app.pufs.find(puf => puf.getId() === pufId);
   //
   let histogram_data = [];
-  
-  for(let i = 0; i < app.challenges.length; i++ ){
-    histogram_data.push(puf.getResponseValue(app.challenges[i]));
+
+  console.log("STAGES " + STAGES);
+
+  // generating 10,000 random challenges
+  for (let i = 0; i < 10000; i++) { 
+    let digits = [];
+    let b = generateRandomBinary(STAGES);  //  generating random binary string of length 'STAGES'
+    /*for (let j = 0; j < b.length; j++) {
+      digits.push(Number(b[j]));
+    }
+    let challenge = new Challenge(digits);*/
+
+    let binaryVector = b.split("").map(ch => parseInt(ch, 10));
+    let challenge = new Challenge(binaryVector);
+    //
+    //console.log("challenge " + challenge);
+    //console.log("delta " + puf.getResponseValue(challenge));
+    histogram_data.push(puf.getResponseValue(challenge));
   }
+
+  console.log("histogram_data " + histogram_data);
+
   let container1 = document.getElementById("histogram-chart");
   
   // render histogram 

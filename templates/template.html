@@ -87,6 +87,7 @@
           <div class="col" style="padding-bottom: 10px;">
           <label for="basic-url" class="form-label">Select δ</label>
             <multiselect v-model="regenerate.selectedDeltas" :options="selectableDeltas" :multiple="true"
+              :close-on-select="false"
               :custom-label="getLabel" placeholder="Select some deltas" label="name" track-by="id"></multiselect>
           </div>
         </div>

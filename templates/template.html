@@ -101,6 +101,8 @@
         <button type="button" class="btn btn-primary" @click="onRegenerateClick" :disabled="regenerate.selectedDeltas.length === 0">Regenerate</button>
         &nbsp;
         <button type="button" class="btn btn-primary" @click="next2">Next</button>
+        &nbsp;
+        <span>{{ infoMessage }}</span>
       </div>
     </div>
     <div v-if="activeSection === 3">

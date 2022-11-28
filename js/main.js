@@ -38,13 +38,13 @@ let c3 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "yellow"]);
 let c4 = d3.scaleSequential().domain([0, 1]).range(["lightblue", "blue"]);
 
 
-const binaryColorScale = (value,row) => row === null?  belowThreshold(value) ? c(0) : c(1) : (
+const binaryColorScale = (value, row) => row === null ? belowThreshold(value) ? c(0) : c(1) : (
 
-  (row < app.group[0]) ? (belowThreshold(value) ? c1(0) : c1(1)) : (row < app.group[0] + app.group[1]) ? (belowThreshold(value) ? c2(0) : c2(1)) :  (row < app.group[0] + app.group[1] + app.group[2]) ? (belowThreshold(value) ? c3(0) : c3(1)) : (belowThreshold(value) ? c4(0) : c4(1))
-  
- );
-const fullColorScale = (value,row) => row === null? cRange(value) : (
-  row < app.group[0] ? c1(value) : (row < app.group[0] + app.group[1]) ?  c2(value)  :  (row < app.group[0] + app.group[1] + app.group[2]) ? c3(value)  : c4(value) 
+  (row < app.group[0]) ? (belowThreshold(value) ? c1(0) : c1(1)) : (row < app.group[0] + app.group[1]) ? (belowThreshold(value) ? c2(0) : c2(1)) : (row < app.group[0] + app.group[1] + app.group[2]) ? (belowThreshold(value) ? c3(0) : c3(1)) : (belowThreshold(value) ? c4(0) : c4(1))
+
+);
+const fullColorScale = (value, row) => row === null ? cRange(value) : (
+  row < app.group[0] ? c1(value) : (row < app.group[0] + app.group[1]) ? c2(value) : (row < app.group[0] + app.group[1] + app.group[2]) ? c3(value) : c4(value)
 
 );
 
@@ -57,7 +57,7 @@ const app = {
   colorScale: binaryColorScale,
   splitState: false,
   brushEnabled: false,
-  group :[],
+  group: [],
   // array of PUF objects
   // they may not be in order of id because if the user applies a sorting operation then they will be reordered
   pufs: [],
@@ -66,12 +66,12 @@ const app = {
   challenges: []
 };
 
-main(); 
+main();
 
 function computeNewStateData(stages, n) {
   STAGES = stages;
   N = n;
-  side = (16*20) / N;
+  side = (16 * 20) / N;
   width = side * N + 15;
   height = side * N;
   E = side * 0.05;
@@ -86,8 +86,8 @@ function syncInputsWithState() {
   const stagesDisplay = document.getElementById("stages-display");
 
   clearContainer(stageInput);
-  for (let i=1; i<=STAGES; i++) {
-    let option= document.createElement("option");
+  for (let i = 1; i <= STAGES; i++) {
+    let option = document.createElement("option");
     option.value = i;
     option.innerHTML = i;
     if (i === 1) {
@@ -101,8 +101,8 @@ function syncInputsWithState() {
   challengeBitInput.setAttribute("value", 1);
 
   clearContainer(pufNumberSelect);
-  for (let i=1; i<=app.pufs.length; i++) {
-    let option= document.createElement("option");
+  for (let i = 1; i <= app.pufs.length; i++) {
+    let option = document.createElement("option");
     option.value = i;
     option.innerHTML = i;
     if (i === 1) {
@@ -161,7 +161,7 @@ function main() {
 function initPufs() {
   const pufs = [];
   const D = N - 0;
-  for (let i=0; i<D; i++) {
+  for (let i = 0; i < D; i++) {
     pufs.push(new PUF(STAGES));
   }
   app.pufs = pufs;
@@ -170,7 +170,7 @@ function initPufs() {
 function initChallenges() {
   const challenges = [];
   const D = N - 0;
-  for (let i=0; i<D; i++) {
+  for (let i = 0; i < D; i++) {
     let challenge = new Challenge(toBinaryVector(i));
     challenges.push(challenge);
   }
@@ -186,7 +186,7 @@ function groupChallenges(bitPosition) {
     const parity1 = challenge1.getParity(bitPosition + 1);
     const parity2 = challenge2.getParity(bitPosition + 1);
 
-    
+
     if (isEven(parity1) && isEven(parity2)) {
       return 0;
     } else if (isEven(parity1) && isOdd(parity2)) {
@@ -258,16 +258,16 @@ function renderMatrix(data) {
     .attr("x", d => d.x)
     .attr("class", d => getSquareClass(d) + " node")
     .attr("fill", d => {
-      
+
       let pufIndex = d.pufIndex;
       let challengeIndex = d.challengeIndex;
 
-      if(app.splitState){
+      if (app.splitState) {
         return app.colorScale(app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2), d.row);
-      }else{
-        return app.colorScale(app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2),null);
+      } else {
+        return app.colorScale(app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2), null);
       }
-      
+
     })
     .attr("width", side)
     .attr("height", side)
@@ -302,6 +302,16 @@ function renderMatrix(data) {
 }
 
 
+function hammingDistance(arr1, arr2) {
+  let count = 0;
+  for (let i = 0; i < arr1.length; i++) {
+    if (arr1[i] != arr2[i]) {
+      count++;
+    }
+  }
+  return count;
+}
+
 function brushed({ selection }) {
   let value = [];
   if (selection) {
@@ -320,19 +330,51 @@ function brushed({ selection }) {
     y1 = Utils.round(y1, 3);
     console.log(x0, y0, x1, y1);
     let selectedData = data.filter(d => x0 <= d.x && d.x < x1 && y0 <= d.y && d.y < y1);
-    let sum = 0, total = 0;
+    let sum = 0, total = 0, brushedHamming= 0;
     console.log(selectedData);
+
+    let colMap = new Map();
+    let colArr = [];
     for (let d of selectedData) {
+
       let puf = app.pufs[d.pufIndex];
       let challenge = app.challenges[d.challengeIndex];
       let response = puf.getResponse(challenge);
-      sum += belowThreshold(response) ? 0 : 1;
+
+      let val = belowThreshold(response) ? 0 : 1;
+      sum += val;
+
+      if (colMap.has(d.col)) {
+
+        let arr = colMap.get(d.col);
+        arr.push(val);
+        colMap.set(d.col, arr);
+      } else {
+        colArr.push(d.col)
+        colMap.set(d.col, [val]);
+      }
       total++;
     }
+
+  
+   
+    for (let i = 0; i < colArr.length - 1; i++) {
+      for (let j = i + 1; j < colArr.length; j++) {
+       // console.log(colArr[i] , colArr[j]);
+        brushedHamming += hammingDistance(colMap.get(colArr[i]) , colMap.get(colArr[j]));
+      //  console.log(brushedHamming);
+      }
+    }
+
+    brushedHamming = brushedHamming/colArr.length;
+
+ 
+
     //console.log(`Sum: ${sum}`);
+    document.getElementById("brush-distance").textContent = brushedHamming;
     document.getElementById("brush-value").textContent = sum;
     document.getElementById("total-value").textContent = total;
-    document.getElementById("ratio-value").textContent = (sum/total.toFixed(2)).toFixed(2);
+    document.getElementById("ratio-value").textContent = (sum / total.toFixed(2)).toFixed(2);
   }
 }
 
@@ -350,12 +392,12 @@ function initializeEventListeners() {
   const brushButton = document.getElementById("brush-button");
   const viewButton = document.getElementById("view-button");
 
-  brushButton.addEventListener("click", function() {
+  brushButton.addEventListener("click", function () {
     app.brushEnabled = true;
     // app.colorScale = binaryColorScale;
     renderMatrix(data);
   });
-  viewButton.addEventListener("click", function() {
+  viewButton.addEventListener("click", function () {
     app.brushEnabled = false;
     // app.colorScale = binaryColorScale;
     renderMatrix(data);
@@ -385,7 +427,7 @@ function initializeEventListeners() {
   const pufNumberSelect = document.getElementById("puf-select");
   // const viewHistogramButton = document.getElementById("histogram-button");
 
-  reorderRowsButton.addEventListener("click", function() {
+  reorderRowsButton.addEventListener("click", function () {
     let challengeBitPosition = parseInt(challengeBitInput.value, 10);
 
     groupChallenges(challengeBitPosition);
@@ -393,7 +435,7 @@ function initializeEventListeners() {
     renderMatrix(data);
   });
 
-  reorderColsButton.addEventListener("click", function() {
+  reorderColsButton.addEventListener("click", function () {
     let stage = parseInt(stageInput.value, 10);
     let delta = parseInt(deltaInput.value, 10);
     sortPufs(stage, delta);
@@ -405,8 +447,8 @@ function initializeEventListeners() {
     renderHistogram(pufNumberSelect.value);
   });
 
-  for (let i=2; i<=STAGES; i++) {
-    let option= document.createElement("option");
+  for (let i = 2; i <= STAGES; i++) {
+    let option = document.createElement("option");
     option.value = i;
     option.innerHTML = i;
     stageInput.appendChild(option);
@@ -466,12 +508,12 @@ function renderHistogram(pufNum) {
   let puf = app.pufs.find(puf => puf.getId() === pufId);
   //
   let histogram_data = [];
-  
-  for(let i = 0; i < app.challenges.length; i++ ){
+
+  for (let i = 0; i < app.challenges.length; i++) {
     histogram_data.push(puf.getResponseValue(app.challenges[i]));
   }
   let container1 = document.getElementById("histogram-chart");
-  
+
   // render histogram 
   let histogram = Histogram(histogram_data, {
     value: d => d,
@@ -489,5 +531,5 @@ function renderHistogram(pufNum) {
 }
 
 function belowThreshold(value) {
-  return value < 0; 
+  return value < 0;
 }

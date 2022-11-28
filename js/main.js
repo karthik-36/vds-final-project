@@ -24,6 +24,7 @@ var tip = d3.tip().attr('class', 'd3-tip').html((event, d) => {
   let pufIndex = d.pufIndex;
   let challengeIndex = d.challengeIndex;
   return app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2);
+  // return `PI: ${pufIndex} CI: ${challengeIndex} R: ${d.row} C: ${d.col}`;
 });
 
 

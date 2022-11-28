@@ -40,22 +40,22 @@
                 <label for="basic-url" class="form-label">μ</label>
                 <div class="input-group mb-3">
                   <input type="number" value="0" class="form-control" id="" aria-describedby="basic-addon3"
-                    v-model="mu">
+                    v-model.number="mu">
                 </div>
                 <label for="basic-url" class="form-label">σ<sup>2</sup></label>
                 <div class="input-group mb-3">
                   <input type="number" class="form-control" id="" aria-describedby="basic-addon3"
-                    v-model="sigma">
+                    v-model.number="sigma">
                 </div>
                 <label for="basic-url" class="form-label">No. of stages</label>
                 <div class="input-group mb-3">
                   <input type="number" class="form-control" id="" aria-describedby="basic-addon3"
-                    v-model="stages">
+                    v-model.number="stages">
                 </div>
                 <label for="basic-url" class="form-label">No. of PUFs</label>
                 <div class="input-group mb-3">
                   <input type="number" class="form-control" id="" aria-describedby="basic-addon3"
-                    v-model="pufs" min="1" max="64"/>
+                    v-model.number="pufs" min="1" max="64"/>
                 </div>
                 <label for="basic-url" class="form-label">No. of Challenges</label>
                 <div class="input-group mb-3">
@@ -73,6 +73,35 @@
     </div>
     <div v-if="activeSection === 2">
       <h2>Regenerate δ</h2>
+      <div class="row">
+        <div class="col">
+          <label for="basic-url" class="form-label">μ</label>
+          <div class="input-group mb-3">
+            <input type="number" value="0" class="form-control" id="" aria-describedby="basic-addon3"
+              v-model.number="regenerate.mu">
+          </div>
+        </div>
+        <div class="col">
+          <label for="basic-url" class="form-label">σ<sup>2</sup></label>
+          <div class="input-group mb-3">
+            <input type="number" class="form-control" id="" aria-describedby="basic-addon3"
+              v-model.number="regenerate.sigma">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col" style="padding-bottom: 10px;">
+          <label for="basic-url" class="form-label">Select δ</label>
+            <multiselect v-model="regenerate.selectedDeltas" :options="selectableDeltas" :multiple="true"
+              :close-on-select="false"
+              :custom-label="getLabel" placeholder="Select some deltas" label="name" track-by="id"></multiselect>
+          </div>
+        </div>
+      </div>
+      <div class="">
+        <button type="button" class="btn btn-primary" @click="onRegenerateClick" :disabled="regenerate.selectedDeltas.length === 0">Regenerate</button>
+        &nbsp;
+        <button type="button" class="btn btn-primary" @click="next2">Next</button>
+      </div>
     </div>
     <div v-if="activeSection === 3">
       <h2>Edit δ</h2>
@@ -81,12 +110,12 @@
           PUF Number:
         </div>
         <div class="col-3">
-          <select class="form-select" id="" @change="onPufChange" v-model="selectedPufIndex">
+          <select class="form-select" id="" @change="onPufChange" v-model.number="selectedPufIndex">
             <option v-for="p in parseInt(pufs, 10)" :value="p-1">{{ p }}</option>
           </select>
         </div>
         <div class="col-4">
-          <input type="number" class="form-control" id="" aria-describedby="basic-addon3" v-model="selectedDelta.value"
+          <input type="number" class="form-control" id="" aria-describedby="basic-addon3" v-model.number="selectedDelta.value"
             :disabled="selectedDelta.index === -1" />
         </div>
         <div class="col-3">

@@ -20,7 +20,7 @@ const brush = d3.brush().on("end", brushed);
 var tip = d3.tip().attr('class', 'd3-tip').html((event, d) => {
   let pufIndex = d.pufIndex;
   let challengeIndex = d.challengeIndex;
-  return app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2) + "xyz";
+  return app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2);
 });
 
 // var tipCol = d3.tip().attr('class', 'd3-tip').html((event, d) => {
@@ -65,8 +65,9 @@ const app = {
   splitState: false,
   brushEnabled: false,
   group: [],
-  hammingColumn1 : -1,
-  hammingColumn2 : -1,
+  hammingColumn1: -1,
+  hammingColumn2: -1,
+  hammingColumnNames: [],
   // array of PUF objects
   // they may not be in order of id because if the user applies a sorting operation then they will be reordered
   pufs: [],
@@ -258,6 +259,9 @@ function renderMatrix(data) {
   }
   context = svg.append("g");
 
+
+
+
   context.selectAll(".node")
     .data(data.filter(d => !d.isDragHandle), d => d.id)
     .join("rect")
@@ -266,10 +270,55 @@ function renderMatrix(data) {
     .attr("y", d => d.y)
     .attr("x", d => d.x)
     .attr("class", d => getSquareClass(d) + " node")
+    .on("click", (event, d) => {
+
+      let arr = [];
+
+      for (let i = 0; i < data.length; i++) {
+
+        if (d.col == data[i].col) {
+          let pufIndex = data[i].pufIndex;
+          let challengeIndex = data[i].challengeIndex;
+          arr.push(belowThreshold(app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2)) ? 0 : 1);
+        }
+
+      }
+
+
+
+
+      if (app.hammingColumn1 != -1 && app.hammingColumn2 != -1) {
+        app.hammingColumn1 = app.hammingColumn2;
+        app.hammingColumn2 = arr;
+
+        app.hammingColumnNames = [app.hammingColumnNames[1]];
+        app.hammingColumnNames.push(d.col);
+      }
+
+      if (app.hammingColumn1 == -1) {
+        app.hammingColumn1 = arr;
+
+        app.hammingColumnNames = [d.col]
+      }
+
+      else if (app.hammingColumn2 == -1) {
+        app.hammingColumn2 = arr;
+        app.hammingColumnNames.push(d.col)
+      }
+
+      if (app.hammingColumn1 != -1 && app.hammingColumn2 != -1) {
+        document.getElementById("col-distance").textContent = "C"+app.hammingColumnNames[0]+",C"+app.hammingColumnNames[1] + " :" + hammingDistance(app.hammingColumn1, app.hammingColumn2);
+      }
+      context.selectAll(".node").style("opacity", d => { if (d.col == app.hammingColumnNames[0] || d.col == app.hammingColumnNames[1]) { return 0.60 } else { return 1 } })
+        .attr("stroke-width", 0.5)
+
+    })
     .attr("fill", d => {
 
       let pufIndex = d.pufIndex;
       let challengeIndex = d.challengeIndex;
+
+
 
       if (app.splitState) {
         return app.colorScale(app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2), d.row);
@@ -280,6 +329,7 @@ function renderMatrix(data) {
     })
     .attr("width", side)
     .attr("height", side)
+
 
 
   // svg.selectAll(".label")
@@ -301,7 +351,7 @@ function renderMatrix(data) {
   //   .attr("class", d => getSquareClass(d) + " label")
   //   .attr("style", textStyle)
 
- 
+
   if (app.brushEnabled) {
     context.call(brush);
   } else {
@@ -344,7 +394,7 @@ function brushed({ selection }) {
     y1 = Utils.round(y1, 3);
     console.log(x0, y0, x1, y1);
     let selectedData = data.filter(d => x0 <= d.x && d.x < x1 && y0 <= d.y && d.y < y1);
-    let sum = 0, total = 0, brushedHamming= 0;
+    let sum = 0, total = 0, brushedHamming = 0;
     console.log(selectedData);
 
     let colMap = new Map();
@@ -369,22 +419,23 @@ function brushed({ selection }) {
       total++;
     }
 
-  
-   
+
+
     for (let i = 0; i < colArr.length - 1; i++) {
       for (let j = i + 1; j < colArr.length; j++) {
-       // console.log(colArr[i] , colArr[j]);
-        brushedHamming += hammingDistance(colMap.get(colArr[i]) , colMap.get(colArr[j]));
-      //  console.log(brushedHamming);
+        brushedHamming += hammingDistance(colMap.get(colArr[i]), colMap.get(colArr[j]));
       }
     }
 
-    brushedHamming = brushedHamming/colArr.length;
+    brushedHamming = brushedHamming / colArr.length;
 
- 
+
 
     //console.log(`Sum: ${sum}`);
-    document.getElementById("brush-distance").textContent = brushedHamming;
+
+    if (app.brushEnabled) {
+      document.getElementById("brush-distance").textContent = brushedHamming.toFixed(3);
+    }
     document.getElementById("brush-value").textContent = sum;
     document.getElementById("total-value").textContent = total;
     document.getElementById("ratio-value").textContent = (sum / total.toFixed(2)).toFixed(2);
@@ -438,9 +489,9 @@ function initializeEventListeners() {
   const reorderColsButton = document.getElementById("reorder-cols");
   // const viewPufDnaButton = document.getElementById("view-puf-dna-button");
   const pufNumberSelect = document.getElementById("puf-select");
-  const cells = document.getElementsByTagName('rect');
-  // const viewHistogramButton = document.getElementById("histogram-button");
-  console.log(cells);
+  // const cells = document.getElementsByTagName('rect');
+  // // const viewHistogramButton = document.getElementById("histogram-button");
+  // console.log(cells);
   reorderRowsButton.addEventListener("click", function () {
     let challengeBitPosition = parseInt(challengeBitInput.value, 10);
 

@@ -332,25 +332,6 @@ function renderMatrix(data) {
 
 
 
-  // svg.selectAll(".label")
-  //   .data(data.filter(d => d.isDragHandle), d => d.id)
-  //   .join("text")
-  //   .text(d => {
-  //     if (d.row === 0 && d.col === 0) {
-  //       return "";
-  //     }
-  //     if (d.row === 0) {
-  //       return `P` + app.pufs[d.pufIndex].getId();
-  //     }
-  //     if (d.col === 0) {
-  //       return app.challenges[d.challengeIndex].getString()
-  //     }
-  //   })
-  //   .attr("y", d => d.y + 0 * side + 15)
-  //   .attr("x", d => d.x + 0 * side + 0)
-  //   .attr("class", d => getSquareClass(d) + " label")
-  //   .attr("style", textStyle)
-
 
   if (app.brushEnabled) {
     context.call(brush);
@@ -430,8 +411,6 @@ function brushed({ selection }) {
     brushedHamming = brushedHamming / colArr.length;
 
 
-
-    //console.log(`Sum: ${sum}`);
 
     if (app.brushEnabled) {
       document.getElementById("brush-distance").textContent = brushedHamming.toFixed(3);

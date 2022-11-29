@@ -27,6 +27,13 @@ var tip = d3.tip().attr('class', 'd3-tip').html((event, d) => {
   // return `PI: ${pufIndex} CI: ${challengeIndex} R: ${d.row} C: ${d.col}`;
 });
 
+// var tipCol = d3.tip().attr('class', 'd3-tip').html((event, d) => {
+//   let pufIndex = d.pufIndex;
+//   let challengeIndex = d.challengeIndex;
+//   console.log(d);
+//   return "hello";
+// });
+
 
 //let cRange = d3.scaleSequential().domain([0, 1]).range(["lightblue", "pink"]);
 
@@ -70,7 +77,10 @@ const app = {
   colorScale: binaryColorScale,
   splitState: false,
   brushEnabled: false,
-  group :[],
+  group: [],
+  hammingColumn1: -1,
+  hammingColumn2: -1,
+  hammingColumnNames: [],
   // array of PUF objects
   // they may not be in order of id because if the user applies a sorting operation then they will be reordered
   pufs: [],
@@ -79,7 +89,7 @@ const app = {
   challenges: []
 };
 
-main(); 
+main();
 
 function computeNewStateData(stages, rows, cols) {
   STAGES = stages;
@@ -100,8 +110,8 @@ function syncInputsWithState() {
   const stagesDisplay = document.getElementById("stages-display");
 
   clearContainer(stageInput);
-  for (let i=1; i<=STAGES; i++) {
-    let option= document.createElement("option");
+  for (let i = 1; i <= STAGES; i++) {
+    let option = document.createElement("option");
     option.value = i;
     option.innerHTML = i;
     if (i === 1) {
@@ -115,8 +125,8 @@ function syncInputsWithState() {
   challengeBitInput.setAttribute("value", 1);
 
   clearContainer(pufNumberSelect);
-  for (let i=1; i<=app.pufs.length; i++) {
-    let option= document.createElement("option");
+  for (let i = 1; i <= app.pufs.length; i++) {
+    let option = document.createElement("option");
     option.value = i;
     option.innerHTML = i;
     if (i === 1) {
@@ -200,7 +210,7 @@ function groupChallenges(bitPosition) {
     const parity1 = challenge1.getParity(bitPosition + 1);
     const parity2 = challenge2.getParity(bitPosition + 1);
 
-    
+
     if (isEven(parity1) && isEven(parity2)) {
       return 0;
     } else if (isEven(parity1) && isOdd(parity2)) {
@@ -263,6 +273,9 @@ function renderMatrix(data) {
   }
   context = svg.append("g");
 
+
+
+
   context.selectAll(".node")
     .data(data.filter(d => !d.isDragHandle), d => d.id)
     .join("rect")
@@ -271,8 +284,51 @@ function renderMatrix(data) {
     .attr("y", d => d.y)
     .attr("x", d => d.x)
     .attr("class", d => getSquareClass(d) + " node")
+    .on("click", (event, d) => {
+
+      let arr = [];
+
+      for (let i = 0; i < data.length; i++) {
+
+        if (d.col == data[i].col) {
+          let pufIndex = data[i].pufIndex;
+          let challengeIndex = data[i].challengeIndex;
+          arr.push(belowThreshold(app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2)) ? 0 : 1);
+        }
+
+      }
+
+
+
+
+      if (app.hammingColumn1 != -1 && app.hammingColumn2 != -1) {
+        app.hammingColumn1 = app.hammingColumn2;
+        app.hammingColumn2 = arr;
+
+        app.hammingColumnNames = [app.hammingColumnNames[1]];
+        app.hammingColumnNames.push(d.col);
+      }
+
+      if (app.hammingColumn1 == -1) {
+        app.hammingColumn1 = arr;
+
+        app.hammingColumnNames = [d.col]
+      }
+
+      else if (app.hammingColumn2 == -1) {
+        app.hammingColumn2 = arr;
+        app.hammingColumnNames.push(d.col)
+      }
+
+      if (app.hammingColumn1 != -1 && app.hammingColumn2 != -1) {
+        document.getElementById("col-distance").textContent = "C"+app.hammingColumnNames[0]+",C"+app.hammingColumnNames[1] + " :" + hammingDistance(app.hammingColumn1, app.hammingColumn2);
+      }
+      context.selectAll(".node").style("opacity", d => { if (d.col == app.hammingColumnNames[0] || d.col == app.hammingColumnNames[1]) { return 0.60 } else { return 1 } })
+        .attr("stroke-width", 0.5)
+
+    })
     .attr("fill", d => {
-      
+
       let pufIndex = d.pufIndex;
       let challengeIndex = d.challengeIndex;
 
@@ -281,10 +337,12 @@ function renderMatrix(data) {
       }else{
         return app.colorScale(app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]), null);
       }
-      
+
     })
     .attr("width", side)
     .attr("height", side)
+
+
 
 
   if (app.brushEnabled) {
@@ -295,8 +353,21 @@ function renderMatrix(data) {
       .on('mouseover', tip.show)
       .on('mouseout', tip.hide)
   }
+
+
+
 }
 
+
+function hammingDistance(arr1, arr2) {
+  let count = 0;
+  for (let i = 0; i < arr1.length; i++) {
+    if (arr1[i] != arr2[i]) {
+      count++;
+    }
+  }
+  return count;
+}
 
 function brushed({ selection }) {
   let value = [];
@@ -316,19 +387,49 @@ function brushed({ selection }) {
     y1 = Utils.round(y1, 3);
     console.log(x0, y0, x1, y1);
     let selectedData = data.filter(d => x0 <= d.x && d.x < x1 && y0 <= d.y && d.y < y1);
-    let sum = 0, total = 0;
+    let sum = 0, total = 0, brushedHamming = 0;
     console.log(selectedData);
+
+    let colMap = new Map();
+    let colArr = [];
     for (let d of selectedData) {
+
       let puf = app.pufs[d.pufIndex];
       let challenge = app.challenges[d.challengeIndex];
       let response = puf.getResponse(challenge);
-      sum += belowThreshold(response) ? 0 : 1;
+
+      let val = belowThreshold(response) ? 0 : 1;
+      sum += val;
+
+      if (colMap.has(d.col)) {
+        let arr = colMap.get(d.col);
+        arr.push(val);
+        colMap.set(d.col, arr);
+      } else {
+        colArr.push(d.col)
+        colMap.set(d.col, [val]);
+      }
       total++;
     }
-    //console.log(`Sum: ${sum}`);
+
+
+
+    for (let i = 0; i < colArr.length - 1; i++) {
+      for (let j = i + 1; j < colArr.length; j++) {
+        brushedHamming += hammingDistance(colMap.get(colArr[i]), colMap.get(colArr[j]));
+      }
+    }
+
+    brushedHamming = brushedHamming / colArr.length;
+
+
+
+    if (app.brushEnabled) {
+      document.getElementById("brush-distance").textContent = brushedHamming.toFixed(3);
+    }
     document.getElementById("brush-value").textContent = sum;
     document.getElementById("total-value").textContent = total;
-    document.getElementById("ratio-value").textContent = (sum/total.toFixed(2)).toFixed(2);
+    document.getElementById("ratio-value").textContent = (sum / total.toFixed(2)).toFixed(2);
   }
 }
 
@@ -346,14 +447,14 @@ function initializeEventListeners() {
   const brushButton = document.getElementById("brush-button");
   const viewButton = document.getElementById("view-button");
 
-  brushButton.addEventListener("click", function() {
+  brushButton.addEventListener("click", function () {
     app.brushEnabled = true;
     // app.colorScale = binaryColorScale;
     brushButton.classList.add("active-button");
     viewButton.classList.remove("active-button");
     renderMatrix(data);
   });
-  viewButton.addEventListener("click", function() {
+  viewButton.addEventListener("click", function () {
     app.brushEnabled = false;
     viewButton.classList.add("active-button");
     brushButton.classList.remove("active-button");
@@ -383,9 +484,10 @@ function initializeEventListeners() {
   const reorderColsButton = document.getElementById("reorder-cols");
   // const viewPufDnaButton = document.getElementById("view-puf-dna-button");
   const pufNumberSelect = document.getElementById("puf-select");
-  // const viewHistogramButton = document.getElementById("histogram-button");
-
-  reorderRowsButton.addEventListener("click", function() {
+  // const cells = document.getElementsByTagName('rect');
+  // // const viewHistogramButton = document.getElementById("histogram-button");
+  // console.log(cells);
+  reorderRowsButton.addEventListener("click", function () {
     let challengeBitPosition = parseInt(challengeBitInput.value, 10);
 
     groupChallenges(challengeBitPosition);
@@ -393,7 +495,7 @@ function initializeEventListeners() {
     renderMatrix(data);
   });
 
-  reorderColsButton.addEventListener("click", function() {
+  reorderColsButton.addEventListener("click", function () {
     let stage = parseInt(stageInput.value, 10);
     let delta = parseInt(deltaInput.value, 10);
     sortPufs(stage, delta);
@@ -495,7 +597,7 @@ function renderHistogram(pufNum) {
   console.log("histogram_data " + histogram_data);
 
   let container1 = document.getElementById("histogram-chart");
-  
+
   // render histogram 
   let histogram = Histogram(histogram_data, {
     value: d => d,

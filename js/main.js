@@ -20,8 +20,15 @@ const brush = d3.brush().on("end", brushed);
 var tip = d3.tip().attr('class', 'd3-tip').html((event, d) => {
   let pufIndex = d.pufIndex;
   let challengeIndex = d.challengeIndex;
-  return app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2);
+  return app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2) + "xyz";
 });
+
+// var tipCol = d3.tip().attr('class', 'd3-tip').html((event, d) => {
+//   let pufIndex = d.pufIndex;
+//   let challengeIndex = d.challengeIndex;
+//   console.log(d);
+//   return "hello";
+// });
 
 
 let cRange = d3.scaleSequential().domain([0, 1]).range(["lightblue", "pink"]);
@@ -58,6 +65,8 @@ const app = {
   splitState: false,
   brushEnabled: false,
   group: [],
+  hammingColumn1 : -1,
+  hammingColumn2 : -1,
   // array of PUF objects
   // they may not be in order of id because if the user applies a sorting operation then they will be reordered
   pufs: [],
@@ -272,6 +281,7 @@ function renderMatrix(data) {
     .attr("width", side)
     .attr("height", side)
 
+
   // svg.selectAll(".label")
   //   .data(data.filter(d => d.isDragHandle), d => d.id)
   //   .join("text")
@@ -291,6 +301,7 @@ function renderMatrix(data) {
   //   .attr("class", d => getSquareClass(d) + " label")
   //   .attr("style", textStyle)
 
+ 
   if (app.brushEnabled) {
     context.call(brush);
   } else {
@@ -299,6 +310,9 @@ function renderMatrix(data) {
       .on('mouseover', tip.show)
       .on('mouseout', tip.hide)
   }
+
+
+
 }
 
 
@@ -345,7 +359,6 @@ function brushed({ selection }) {
       sum += val;
 
       if (colMap.has(d.col)) {
-
         let arr = colMap.get(d.col);
         arr.push(val);
         colMap.set(d.col, arr);
@@ -425,8 +438,9 @@ function initializeEventListeners() {
   const reorderColsButton = document.getElementById("reorder-cols");
   // const viewPufDnaButton = document.getElementById("view-puf-dna-button");
   const pufNumberSelect = document.getElementById("puf-select");
+  const cells = document.getElementsByTagName('rect');
   // const viewHistogramButton = document.getElementById("histogram-button");
-
+  console.log(cells);
   reorderRowsButton.addEventListener("click", function () {
     let challengeBitPosition = parseInt(challengeBitInput.value, 10);
 

@@ -163,12 +163,19 @@ table{
     flex: 1;
     padding: 5px;
 }
+
 .number-display .header {
-    font-size: 12px;
+  font-size: 12px;
 }
 .number-display .value {
     font-size: 20px;
 }
+
+.number-display .header-big {
+  font-size: 12px;
+  width: 110px;
+}
+
 
 .item:nth-child(even) {
     background-color: pink;
@@ -177,6 +184,9 @@ table{
 .item:nth-child(odd) {
     background-color: lightblue;
 }
+
+
+
 
 
 .controls .btn.btn-primary.active-button {

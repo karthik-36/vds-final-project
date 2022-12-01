@@ -293,7 +293,7 @@ function renderMatrix(data) {
         if (d.col == data[i].col) {
           let pufIndex = data[i].pufIndex;
           let challengeIndex = data[i].challengeIndex;
-          arr.push(belowThreshold(app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex]).toFixed(2)) ? 0 : 1);
+          arr.push(belowThreshold(app.pufs[pufIndex].getResponseValue(app.challenges[challengeIndex])) ? 0 : 1);
         }
 
       }

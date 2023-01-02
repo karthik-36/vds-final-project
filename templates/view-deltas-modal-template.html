@@ -1,0 +1,22 @@
+<div class="modal-content">
+    <div class="modal-header">
+      <h1 class="modal-title fs-5" id="exampleModalLabel">Delta Values</h1>
+      <button type="button" class="btn-close" aria-label="Close" @click="closeModal"></button>
+    </div>
+    <div class="modal-body">
+        <h2>Delta Values</h2>
+        <table>
+            <tr>
+                <th>PUF</th>
+                <th>𝛿(0)</th>
+                <th>𝛿(1)</th>
+            </tr>
+            <tr v-for="(delta, i) in deltas">
+                <td>{{ i + 1 }}</td>
+                <td>{{ delta[0] }}</td>
+                <td>{{ delta[1] }}</td>
+            </tr>
+        </table>
+    </div>
+  </div>
+  </div>

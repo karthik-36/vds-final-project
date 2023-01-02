@@ -140,27 +140,27 @@
           <div class="col-9" style="display: flex;">
             <div class="number-display" style="flex: 1">
               <div class="item">
-                <div class="header">Resp. Bias</div>
+                <div class="header" id="resp-bias">Resp. Bias</div>
                 <div class="value" id="brush-value">0</div>
               </div>
               <div class="item">
-                <div class="header">Total</div>
+                <div class="header" id="total">Total</div>
                 <div class="value" id="total-value">0</div>
               </div>
               <div class="item">
-                <div class="header">Ratio</div>
+                <div class="header" id="ratio">Ratio</div>
                 <div class="value" id="ratio-value">0</div>
               </div>
               <div class="item">
-                <div class="header">Stages</div>
+                <div class="header" id="stages">Stages</div>
                 <div class="value" id="stages-display">456</div>
               </div>
               <div class="item">
-                <div class="header-big">Area Hamming Dist.</div>
+                <div class="header-big" id="area-hamming">Area Hamming Dist.</div>
                 <div class="value" id="brush-distance">-</div>
               </div>
               <div class="item">
-                <div class="header-big">Col. Hamming Dist.</div>
+                <div class="header-big" id="col-hamming">Col. Hamming Dist.</div>
                 <div class="value" id="col-distance">-</div>
               </div>
             </div>
@@ -242,6 +242,7 @@
       href="https://cdn.jsdelivr.net/gh/bumbeishvili/d3-tip-for-v6@4/d3-tip.min.css"
     />
     <script src="https://unpkg.com/vue-multiselect@2.1.6"></script>
+    <script src="js/strings.js"></script>
     <script src="lib/histogram.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/challenge.js"></script>

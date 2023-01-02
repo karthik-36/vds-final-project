@@ -163,6 +163,7 @@ function populateData() {
 
 function main() {
   populateData();
+  initStrings();
   initPufs();
   initChallenges();
 
@@ -619,4 +620,13 @@ function belowThreshold(value) {
     throw new Error("Must be a number!");
   }
   return value < 0; 
+}
+
+function initStrings() {
+  document.getElementById("resp-bias").innerText = Strings.RESPONSE_BIAS;
+  document.getElementById("total").innerText = Strings.TOTAL;
+  document.getElementById("ratio").innerText = Strings.RATIO;
+  document.getElementById("stages").innerText = Strings.STAGES;
+  document.getElementById("area-hamming").innerText = Strings.AREA_HAMMING_DISTANCE;
+  document.getElementById("col-hamming").innerText = Strings.COLUMN_HAMMING_DISTANCE;
 }

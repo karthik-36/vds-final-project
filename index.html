@@ -56,18 +56,6 @@
                 </button>
                 <ul class="dropdown-menu">
                   <div>
-                    <span class="links_name">Select Stage &nbsp;</span>
-                    <input
-                      type="number"
-                      class="form-control form-control-sm"
-                      id="num-stages"
-                      placeholder=""
-                      value="1"
-                      min="1"
-                      max="4"
-                    />
-                  </div>
-                  <div>
                     <span class="links_name">Bit Position &nbsp; &nbsp;</span>
                     <input
                       type="number"
@@ -131,6 +119,10 @@
 
             <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
               <button type="button" class="btn btn-primary"><i class="bi bi-question"></i></button>
+            </div>
+
+            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+              <button data-bs-toggle="modal" data-bs-target="#view-deltas-modal" type="button" class="btn btn-primary" id="view-delta-values-button">δ</button>
             </div>
           </div>
           </div>
@@ -197,7 +189,7 @@
         </div>
 
         <div class="chart2">
-          <div class="title" style="padding-bottom: 5px;">Histogram ∆(n)</div>
+          <div class="title" style="padding-bottom: 5px;">Histogram of ∆(n) for 10k randomly generated challenges</div>
           <div id="histogram-chart"></div>
         </div>
       </div>
@@ -213,6 +205,19 @@
     >
       <div class="modal-dialog">
         <div id="edit-data-app"></div>
+      </div>
+    </div>
+
+    <div
+      class="modal modal-xl fade"
+      id="view-deltas-modal"
+      tabindex="-1"
+      aria-labelledby=""
+      aria-hidden="true"
+      role=""
+    >
+      <div class="modal-dialog">
+        <div id="delta-table-app"></div>
       </div>
     </div>
 
@@ -250,6 +255,7 @@
     <script src="js/barchart.js"></script>
     <script src="js/main.js"></script>
     <script src="js/edit-data-flow.js"></script>
+    <script src="js/delta-table.js"></script>
   </body>
 </html>
 

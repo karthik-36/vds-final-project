@@ -89,18 +89,6 @@
     /* padding-bottom: 15px; */
 }
 
-tr{
-    background-color: antiquewhite;
-
-}
-td{
-    background-color: antiquewhite;
-
-}
-table{
-    color: #000000;
-}
-
 .toast-header {
     display: flex;
 }
@@ -128,12 +116,6 @@ table{
 
 .right .dropdown-menu.show {
     padding: 10px;
-}
-.table {
-    margin-bottom: 0px;
-}
-.table>:not(caption)>*>* {
-    padding: 3px;
 }
 .controls {
     padding: 5px;

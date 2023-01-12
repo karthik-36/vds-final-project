@@ -607,7 +607,7 @@ function renderHistogram(pufNum) {
     width: container1.clientWidth,
     height: 150,
     thresholds: 20,
-    color: "steelblue"
+    color: "#006A4E"
   });
 
   clearContainer(container1);

@@ -30,15 +30,23 @@ function BarChart(data, {
   
     // Compute default domains, and unique the x-domain.
     if (xDomain === undefined) xDomain = X;
-    if (yDomain === undefined) yDomain = [d3.min(Y), d3.max(Y)];
+    if (yDomain === undefined) yDomain = [
+      Math.min(d3.min(Y)-1, -1), 
+      Math.max(d3.max(Y)+1, 1)
+    ];
     xDomain = new d3.InternSet(xDomain);
-  
+
     // Omit any data not present in the x-domain.
     const I = d3.range(X.length).filter(i => xDomain.has(X[i]));
   
     // Construct scales, axes, and formats.
     const xScale = d3.scaleBand(xDomain, xRange).padding(xPadding);
-    const yScale = yType(yDomain, yRange);
+    let yScale = yType(yDomain, yRange);
+    if (d3.max(Y) - d3.min(Y) > 8) {
+      yScale = d3.scaleSymlog()
+        .domain(yDomain)
+        .range(yRange);
+    }
     const xAxis = d3.axisBottom(xScale).tickValues(getTickValues(X)).tickSizeOuter(0);
     const yAxis = d3.axisLeft(yScale).ticks(height / 40, yFormat);
   

@@ -158,7 +158,7 @@ function createModalVueApp(template) {
           y: d => d[0],
           yFormat: "",
           yLabel: "Value 𝛿(0)",
-          yDomain: [-3.5, 3.5], // [ymin, ymax]
+          // yDomain: [-3.5, 3.5], // [ymin, ymax]
           width: 1000,
           height: 250,
           color: "steelblue",
@@ -173,7 +173,7 @@ function createModalVueApp(template) {
           y: d => d[1],
           yFormat: "",
           yLabel: "Value 𝛿(1)",
-          yDomain: [-3.5, 3.5], // [ymin, ymax]
+          // yDomain: [-3.5, 3.5], // [ymin, ymax]
           width: 1000,
           height: 250,
           color: "steelblue",

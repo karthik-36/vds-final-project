@@ -546,7 +546,7 @@ function renderBarCharts(pufNum) {
     y: d => d,
     yFormat: "",
     yLabel: "Value 𝛿(0)",
-    yDomain: [-3.5, 3.5], // [ymin, ymax]
+    // yDomain: [-3.5, 3.5], // [ymin, ymax]
     width: container1.clientWidth,
     height: 150,
     color: "steelblue"
@@ -559,7 +559,7 @@ function renderBarCharts(pufNum) {
     x: (d, i) => i + 1,
     y: d => d,
     yFormat: "",
-    yDomain: [-3.5, 3.5], // [ymin, ymax]
+    // yDomain: [-3.5, 3.5], // [ymin, ymax]
     yLabel: "Value 𝛿(1)",
     width: container2.clientWidth,
     height: 150,

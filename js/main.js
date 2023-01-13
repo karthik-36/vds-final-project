@@ -163,6 +163,7 @@ function populateData() {
 
 function main() {
   populateData();
+  initStrings();
   initPufs();
   initChallenges();
 
@@ -545,7 +546,7 @@ function renderBarCharts(pufNum) {
     y: d => d,
     yFormat: "",
     yLabel: "Value 𝛿(0)",
-    yDomain: [-3.5, 3.5], // [ymin, ymax]
+    // yDomain: [-3.5, 3.5], // [ymin, ymax]
     width: container1.clientWidth,
     height: 150,
     color: "steelblue"
@@ -558,7 +559,7 @@ function renderBarCharts(pufNum) {
     x: (d, i) => i + 1,
     y: d => d,
     yFormat: "",
-    yDomain: [-3.5, 3.5], // [ymin, ymax]
+    // yDomain: [-3.5, 3.5], // [ymin, ymax]
     yLabel: "Value 𝛿(1)",
     width: container2.clientWidth,
     height: 150,
@@ -606,7 +607,7 @@ function renderHistogram(pufNum) {
     width: container1.clientWidth,
     height: 150,
     thresholds: 20,
-    color: "steelblue"
+    color: "#006A4E"
   });
 
   clearContainer(container1);
@@ -619,4 +620,13 @@ function belowThreshold(value) {
     throw new Error("Must be a number!");
   }
   return value < 0; 
+}
+
+function initStrings() {
+  document.getElementById("resp-bias").innerText = Strings.RESPONSE_BIAS;
+  document.getElementById("total").innerText = Strings.TOTAL;
+  document.getElementById("ratio").innerText = Strings.RATIO;
+  document.getElementById("stages").innerText = Strings.STAGES;
+  document.getElementById("area-hamming").innerText = Strings.AREA_HAMMING_DISTANCE;
+  document.getElementById("col-hamming").innerText = Strings.COLUMN_HAMMING_DISTANCE;
 }
